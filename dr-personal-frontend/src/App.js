@@ -89,6 +89,8 @@ function appReducer(state, action) {
 const apiService = {
   generatePartialPrescription: async (profileData) => {
     try {
+      console.log('Sending data to API:', profileData); // Debug log
+      
       const response = await fetch('/api/prescription/generate-partial-prescription', {
         method: 'POST',
         mode: 'cors',
@@ -101,18 +103,18 @@ const apiService = {
             id: profileData.profile.id,
             gender: profileData.profile.gender.toLowerCase(),
             birth_date: profileData.profile.birth_date,
-            weekly_frequency: profileData.profile.weekly_frequency,
-            session_time: profileData.profile.session_time,
-            uninterrupted_training_time: profileData.profile.uninterrupted_training_time,
-            detraining: profileData.profile.detraining,
-            previous_experience: profileData.profile.previous_experience,
+            weekly_frequency: Number(profileData.profile.weekly_frequency),
+            session_time: Number(profileData.profile.session_time),
+            uninterrupted_training_time: Number(profileData.profile.uninterrupted_training_time),
+            detraining: Number(profileData.profile.detraining),
+            previous_experience: Number(profileData.profile.previous_experience),
             technique: profileData.profile.technique.toLowerCase(),
             strength_values: {
-              bench_press: profileData.profile.strength_values.bench_press,
-              lat_pulldown: profileData.profile.strength_values.lat_pulldown,
-              squat: profileData.profile.strength_values.squat,
-              deadlift: profileData.profile.strength_values.deadlift,
-              handgrip_dynamometer: profileData.profile.strength_values.handgrip_dynamometer
+              bench_press: Number(profileData.profile.strength_values.bench_press),
+              lat_pulldown: Number(profileData.profile.strength_values.lat_pulldown),
+              squat: Number(profileData.profile.strength_values.squat),
+              deadlift: Number(profileData.profile.strength_values.deadlift),
+              handgrip_dynamometer: Number(profileData.profile.strength_values.handgrip_dynamometer)
             },
             health_conditions: profileData.profile.health_conditions
           }
@@ -120,7 +122,15 @@ const apiService = {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let errorDetail = '';
+        try {
+          const errorBody = await response.text();
+          console.error('API Error Response:', errorBody); // Debug log
+          errorDetail = errorBody ? ` - ${errorBody}` : '';
+        } catch (e) {
+          // Ignore error parsing response body
+        }
+        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
       }
 
       return await response.json();
@@ -436,7 +446,7 @@ const ProfilePage = () => {
     uninterrupted_training_time: 0,
     detraining: 0,
     previous_experience: 0,
-    technique: 'AVERAGE',
+    technique: 'REGULAR',
     strength_values: {
       bench_press: 0,
       lat_pulldown: 0,
@@ -464,17 +474,24 @@ const ProfilePage = () => {
   ];
 
   const handleInputChange = (field, value) => {
+    // Handle numeric values properly to avoid NaN
+    const processedValue = field.includes('weekly_frequency') || field.includes('session_time') || 
+                          field.includes('uninterrupted_training_time') || field.includes('detraining') || 
+                          field.includes('previous_experience') || field.includes('strength_values')
+      ? (value === '' ? 0 : Number(value))
+      : value;
+
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
       setFormData(prev => ({
         ...prev,
         [parent]: {
           ...prev[parent],
-          [child]: value
+          [child]: processedValue
         }
       }));
     } else {
-      setFormData(prev => ({ ...prev, [field]: value }));
+      setFormData(prev => ({ ...prev, [field]: processedValue }));
     }
   };
 
@@ -507,18 +524,68 @@ const ProfilePage = () => {
     }
   };
 
+  const validateFormData = () => {
+    const errors = [];
+    
+    if (!formData.id || formData.id.trim() === '') {
+      errors.push('ID do usuário é obrigatório');
+    }
+    
+    if (!formData.birth_date || formData.birth_date === '') {
+      errors.push('Data de nascimento é obrigatória');
+    }
+    
+    if (formData.weekly_frequency < 1 || formData.weekly_frequency > 7) {
+      errors.push('Frequência semanal deve estar entre 1 e 7 dias');
+    }
+    
+    if (formData.session_time < 15 || formData.session_time > 180) {
+      errors.push('Duração da sessão deve estar entre 15 e 180 minutos');
+    }
+    
+    return errors;
+  };
+
   const handleSubmit = async () => {
+    // Validate form data before submission
+    const validationErrors = validateFormData();
+    if (validationErrors.length > 0) {
+      dispatch({ type: 'SET_ERROR', payload: `Dados inválidos: ${validationErrors.join(', ')}` });
+      return;
+    }
+
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
-      const response = await apiService.generatePartialPrescription({ profile: formData });
+      // Ensure all numeric fields are properly formatted
+      const sanitizedFormData = {
+        ...formData,
+        weekly_frequency: Number(formData.weekly_frequency) || 3,
+        session_time: Number(formData.session_time) || 60,
+        uninterrupted_training_time: Number(formData.uninterrupted_training_time) || 0,
+        detraining: Number(formData.detraining) || 0,
+        previous_experience: Number(formData.previous_experience) || 0,
+        strength_values: {
+          bench_press: Number(formData.strength_values.bench_press) || 0,
+          lat_pulldown: Number(formData.strength_values.lat_pulldown) || 0,
+          squat: Number(formData.strength_values.squat) || 0,
+          deadlift: Number(formData.strength_values.deadlift) || 0,
+          handgrip_dynamometer: Number(formData.strength_values.handgrip_dynamometer) || 0
+        }
+      };
+      
+      const response = await apiService.generatePartialPrescription({ profile: sanitizedFormData });
       dispatch({ type: 'SET_PARTIAL_PRESCRIPTION', payload: response });
-      dispatch({ type: 'SET_USER_PROFILE', payload: formData });
+      dispatch({ type: 'SET_USER_PROFILE', payload: sanitizedFormData });
       dispatch({ type: 'SET_PAGE', payload: 'prescription' });
     } catch (error) {
       console.error('Error generating partial prescription:', error);
       let errorMessage = 'Erro ao gerar prescrição parcial';
       if (error.message.includes('Failed to fetch')) {
         errorMessage = 'Erro de conexão. Verifique se o backend está rodando em http://localhost:8000';
+      } else if (error.message.includes('422')) {
+        errorMessage = 'Dados inválidos enviados para o servidor. Verifique todos os campos.';
+      } else if (error.message.includes('500')) {
+        errorMessage = 'Erro interno do servidor. Tente novamente em alguns minutos.';
       } else if (error.message.includes('HTTP error')) {
         errorMessage = `Erro do servidor: ${error.message}`;
       }
@@ -616,7 +683,7 @@ const ProfilePage = () => {
                 <input
                   type="number"
                   value={formData.weekly_frequency}
-                  onChange={(e) => handleInputChange('weekly_frequency', parseInt(e.target.value))}
+                  onChange={(e) => handleInputChange('weekly_frequency', e.target.value)}
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                   min="1"
                   max="7"
@@ -630,7 +697,7 @@ const ProfilePage = () => {
                 <input
                   type="number"
                   value={formData.session_time}
-                  onChange={(e) => handleInputChange('session_time', parseInt(e.target.value))}
+                  onChange={(e) => handleInputChange('session_time', e.target.value)}
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                   min="15"
                   max="180"
@@ -650,7 +717,7 @@ const ProfilePage = () => {
               <input
                 type="number"
                 value={formData.uninterrupted_training_time}
-                onChange={(e) => handleInputChange('uninterrupted_training_time', parseInt(e.target.value))}
+                onChange={(e) => handleInputChange('uninterrupted_training_time', e.target.value)}
                 className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                 min="0"
                 max="120"
@@ -664,7 +731,7 @@ const ProfilePage = () => {
               <input
                 type="number"
                 value={formData.detraining}
-                onChange={(e) => handleInputChange('detraining', parseInt(e.target.value))}
+                onChange={(e) => handleInputChange('detraining', e.target.value)}
                 className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                 min="0"
                 max="120"
@@ -678,7 +745,7 @@ const ProfilePage = () => {
               <input
                 type="number"
                 value={formData.previous_experience}
-                onChange={(e) => handleInputChange('previous_experience', parseInt(e.target.value))}
+                onChange={(e) => handleInputChange('previous_experience', e.target.value)}
                 className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                 min="0"
                 max="50"
@@ -695,7 +762,7 @@ const ProfilePage = () => {
                 className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
               >
                 <option value="BAD">Ruim</option>
-                <option value="AVERAGE">Médio</option>
+                <option value="REGULAR">Médio</option>
                 <option value="GOOD">Bom</option>
                 <option value="EXCELLENT">Excelente</option>
               </select>
@@ -718,7 +785,7 @@ const ProfilePage = () => {
                 <input
                   type="number"
                   value={formData.strength_values.bench_press}
-                  onChange={(e) => handleInputChange('strength_values.bench_press', parseInt(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('strength_values.bench_press', e.target.value)}
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                   min="0"
                 />
@@ -731,7 +798,7 @@ const ProfilePage = () => {
                 <input
                   type="number"
                   value={formData.strength_values.lat_pulldown}
-                  onChange={(e) => handleInputChange('strength_values.lat_pulldown', parseInt(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('strength_values.lat_pulldown', e.target.value)}
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                   min="0"
                 />
@@ -744,7 +811,7 @@ const ProfilePage = () => {
                 <input
                   type="number"
                   value={formData.strength_values.squat}
-                  onChange={(e) => handleInputChange('strength_values.squat', parseInt(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('strength_values.squat', e.target.value)}
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                   min="0"
                 />
@@ -757,7 +824,7 @@ const ProfilePage = () => {
                 <input
                   type="number"
                   value={formData.strength_values.deadlift}
-                  onChange={(e) => handleInputChange('strength_values.deadlift', parseInt(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('strength_values.deadlift', e.target.value)}
                   className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                   min="0"
                 />
