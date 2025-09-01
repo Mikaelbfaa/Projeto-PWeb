@@ -85,115 +85,79 @@ function appReducer(state, action) {
   }
 }
 
-// Mock API service
+// API service
 const apiService = {
-  generatePartialPrescription: async (profile) => {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const trainingTime = profile.profile.uninterrupted_training_time;
-    let level = "BEGINNER";
-    if (trainingTime > 24) {
-      level = "ADVANCED";
-    } else if (trainingTime > 12) {
-      level = "INTERMEDIATE";
+  generatePartialPrescription: async (profileData) => {
+    try {
+      const response = await fetch('/api/prescription/generate-partial-prescription', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          profile: {
+            id: profileData.profile.id,
+            gender: profileData.profile.gender.toLowerCase(),
+            birth_date: profileData.profile.birth_date,
+            weekly_frequency: profileData.profile.weekly_frequency,
+            session_time: profileData.profile.session_time,
+            uninterrupted_training_time: profileData.profile.uninterrupted_training_time,
+            detraining: profileData.profile.detraining,
+            previous_experience: profileData.profile.previous_experience,
+            technique: profileData.profile.technique.toLowerCase(),
+            strength_values: {
+              bench_press: profileData.profile.strength_values.bench_press,
+              lat_pulldown: profileData.profile.strength_values.lat_pulldown,
+              squat: profileData.profile.strength_values.squat,
+              deadlift: profileData.profile.strength_values.deadlift,
+              handgrip_dynamometer: profileData.profile.strength_values.handgrip_dynamometer
+            },
+            health_conditions: profileData.profile.health_conditions
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error calling generatePartialPrescription API:', error);
+      throw error;
     }
-    
-    return {
-      db_return: "Profile created successfully",
-      level: level,
-      training_method: {
-        recommended: "SA-SB-SU",
-        options: ["SA-SB-SU", "Full Body", "SA-SB-SA-SB", "Push-Pull-Legs"]
-      },
-      division_type: {
-        recommended: "Upper and Lower",
-        options: ["Upper and Lower", "Push and Pull", "Full Body", "By Muscle Group"]
-      },
-      sequency_type: {
-        recommended: "Conventional",
-        options: ["Conventional", "Inverted", "Alternated by Segment"]
-      },
-      periodization_type: {
-        recommended: "Linear",
-        options: ["Linear", "Undulating", "Block", "Reverse Linear"]
-      },
-      mesocycle_duration: {
-        recommended: 8,
-        options: [6, 8, 10, 12]
-      },
-      progression_status: trainingTime > 0 ? {
-        recommended: "progression",
-        options: ["progression", "stagnated"]
-      } : null
-    };
   },
 
   generateFullPrescription: async (request) => {
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    return {
-      division_type: request.division_type,
-      sequency_type: request.sequency_type,
-      periodization_type: request.periodization_type,
-      microcycle_1: [
-        {
-          training_parameters: {
-            strength_manifestation: "Hypertrophy Strength",
-            maximum_strength: "65-75%",
-            sets: 3,
-            repetitions: { min: 8, max: 12 },
-            pause_time: "90-120s",
-            concentric_contraction_time: "2s",
-            eccentric_contraction_time: "3s",
-            execution_method: "Controlled"
-          }
+    try {
+      const response = await fetch('/api/prescription/generate-prescription', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        {
-          SA: {
-            exercises: [
-              {
-                exercise_id: "SA01",
-                name: "Supino reto com barra",
-                exercise_type: "strength",
-                sets: 3,
-                repetitions: { min: 8, max: 12 },
-                pause_time: "90-120s"
-              },
-              {
-                exercise_id: "SA02",
-                name: "Desenvolvimento com halteres",
-                exercise_type: "strength",
-                sets: 3,
-                repetitions: { min: 10, max: 15 },
-                pause_time: "60-90s"
-              }
-            ]
-          }
-        },
-        {
-          SB: {
-            exercises: [
-              {
-                exercise_id: "SB01",
-                name: "Agachamento livre",
-                exercise_type: "strength",
-                sets: 3,
-                repetitions: { min: 8, max: 12 },
-                pause_time: "90-120s"
-              },
-              {
-                exercise_id: "SB02",
-                name: "Levantamento terra",
-                exercise_type: "strength",
-                sets: 3,
-                repetitions: { min: 6, max: 10 },
-                pause_time: "120-150s"
-              }
-            ]
-          }
-        }
-      ]
-    };
+        body: JSON.stringify({
+          user_id: request.user_id,
+          training_method: request.training_method,
+          division_type: request.division_type,
+          sequency_type: request.sequency_type,
+          periodization_type: request.periodization_type,
+          mesocycle_duration: request.mesocycle_duration
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error calling generateFullPrescription API:', error);
+      throw error;
+    }
   },
 
   syncMuscleGroups: async (data) => {
@@ -551,7 +515,14 @@ const ProfilePage = () => {
       dispatch({ type: 'SET_USER_PROFILE', payload: formData });
       dispatch({ type: 'SET_PAGE', payload: 'prescription' });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Erro ao gerar prescrição parcial' });
+      console.error('Error generating partial prescription:', error);
+      let errorMessage = 'Erro ao gerar prescrição parcial';
+      if (error.message.includes('Failed to fetch')) {
+        errorMessage = 'Erro de conexão. Verifique se o backend está rodando em http://localhost:8000';
+      } else if (error.message.includes('HTTP error')) {
+        errorMessage = `Erro do servidor: ${error.message}`;
+      }
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -976,8 +947,7 @@ const PrescriptionPage = () => {
         division_type: selectedOptions.division_type,
         sequency_type: selectedOptions.sequency_type,
         periodization_type: selectedOptions.periodization_type,
-        mesocycle_duration: selectedOptions.mesocycle_duration,
-        progression_status: selectedOptions.progression_status || null
+        mesocycle_duration: selectedOptions.mesocycle_duration
       };
       
       const response = await apiService.generateFullPrescription(request);
@@ -993,7 +963,14 @@ const PrescriptionPage = () => {
       
       setShowFullPrescription(true);
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Erro ao gerar prescrição completa' });
+      console.error('Error generating full prescription:', error);
+      let errorMessage = 'Erro ao gerar prescrição completa';
+      if (error.message.includes('Failed to fetch')) {
+        errorMessage = 'Erro de conexão. Verifique se o backend está rodando em http://localhost:8000';
+      } else if (error.message.includes('HTTP error')) {
+        errorMessage = `Erro do servidor: ${error.message}`;
+      }
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -1251,54 +1228,96 @@ const FullPrescriptionView = () => {
           <div className="text-xs text-secondary font-medium uppercase tracking-wider">Séries</div>
           <div className="text-xl font-bold text-secondary/80">{exercise.sets}</div>
         </div>
-        <div className="bg-accent/10 p-3 rounded-lg">
-          <div className="text-xs text-accent font-medium uppercase tracking-wider">Repetições</div>
-          <div className="text-xl font-bold text-accent/80">{exercise.repetitions.min}-{exercise.repetitions.max}</div>
-        </div>
+        
+        {exercise.count_type === 'repetition' ? (
+          <div className="bg-accent/10 p-3 rounded-lg">
+            <div className="text-xs text-accent font-medium uppercase tracking-wider">Repetições</div>
+            <div className="text-xl font-bold text-accent/80">
+              {exercise.repetitions ? `${exercise.repetitions.min}-${exercise.repetitions.max}` : 'N/A'}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-accent/10 p-3 rounded-lg">
+            <div className="text-xs text-accent font-medium uppercase tracking-wider">Tempo</div>
+            <div className="text-xl font-bold text-accent/80">{exercise.execution_time}s</div>
+          </div>
+        )}
+        
         <div className="bg-primary/10 p-3 rounded-lg">
           <div className="text-xs text-primary font-medium uppercase tracking-wider">Pausa</div>
           <div className="text-sm font-semibold text-primary/80">{exercise.pause_time}</div>
         </div>
         <div className="bg-light/50 p-3 rounded-lg">
           <div className="text-xs text-gray-600 font-medium uppercase tracking-wider">Tipo</div>
-          <div className="text-sm font-semibold text-gray-700 capitalize">{exercise.exercise_type}</div>
+          <div className="text-sm font-semibold text-gray-700 capitalize">{exercise.exercise_type || 'strength'}</div>
         </div>
       </div>
     </div>
   );
 
-  const TrainingDayCard = ({ dayName, dayData }) => (
-    <div className="bg-gradient-to-br from-white to-secondary/20 p-8 rounded-3xl shadow-xl border border-secondary/30 hover:shadow-2xl transition-all duration-500">
-      <div className="flex items-center mb-6">
-        <div className="p-3 rounded-2xl bg-secondary text-light mr-4 shadow-lg">
-          <Calendar className="h-6 w-6" />
+  const TrainingDayCard = ({ dayName, dayData }) => {
+    // Verificar se dayData existe e tem exercises
+    if (!dayData || !dayData.exercises) {
+      console.warn(`TrainingDayCard: dayData ou exercises não encontrado para ${dayName}`, dayData);
+      return (
+        <div className="bg-gradient-to-br from-white to-secondary/20 p-8 rounded-3xl shadow-xl border border-secondary/30">
+          <div className="flex items-center mb-6">
+            <div className="p-3 rounded-2xl bg-secondary text-light mr-4 shadow-lg">
+              <Calendar className="h-6 w-6" />
+            </div>
+            <h3 className="text-2xl font-bold text-primary uppercase tracking-wide">{dayName}</h3>
+          </div>
+          <p className="text-gray-500">Nenhum exercício encontrado para este dia</p>
         </div>
-        <h3 className="text-2xl font-bold text-primary uppercase tracking-wide">{dayName}</h3>
-      </div>
-      
-      <div className="space-y-4">
-        {dayData.exercises.map((exercise, index) => (
-          <ExerciseCard key={index} exercise={exercise} />
-        ))}
-      </div>
-      
-      <div className="mt-6 pt-4 border-t border-secondary/30">
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <span className="flex items-center">
-            <Clock className="h-4 w-4 mr-1" />
-            {dayData.exercises.length} exercícios
-          </span>
-          <span className="bg-secondary/20 text-secondary px-3 py-1 rounded-full font-medium">
-            Dia {dayName}
-          </span>
+      );
+    }
+
+    return (
+      <div className="bg-gradient-to-br from-white to-secondary/20 p-8 rounded-3xl shadow-xl border border-secondary/30 hover:shadow-2xl transition-all duration-500">
+        <div className="flex items-center mb-6">
+          <div className="p-3 rounded-2xl bg-secondary text-light mr-4 shadow-lg">
+            <Calendar className="h-6 w-6" />
+          </div>
+          <h3 className="text-2xl font-bold text-primary uppercase tracking-wide">{dayName}</h3>
+        </div>
+        
+        <div className="space-y-4">
+          {dayData.exercises.map((exercise, index) => (
+            <ExerciseCard key={exercise.exercise_id || index} exercise={exercise} />
+          ))}
+        </div>
+        
+        <div className="mt-6 pt-4 border-t border-secondary/30">
+          <div className="flex items-center justify-between text-sm text-gray-600">
+            <span className="flex items-center">
+              <Clock className="h-4 w-4 mr-1" />
+              {dayData.exercises.length} exercícios
+            </span>
+            <span className="bg-secondary/20 text-secondary px-3 py-1 rounded-full font-medium">
+              Dia {dayName}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const MicrocycleCard = ({ microcycleName, microcycleData }) => {
-    const trainingParams = microcycleData[0] && microcycleData[0].training_parameters;
-    const trainingDays = microcycleData.slice(1);
+    // microcycleData é um array onde [0] = training_parameters e [1], [2], etc. = dias
+    const trainingParams = microcycleData[0]?.training_parameters;
+    
+    // Extrair os dias de treino (índices 1 em diante)
+    const trainingDays = [];
+    for (let i = 1; i < microcycleData.length; i++) {
+      const dayObj = microcycleData[i];
+      // Cada dayObj é algo como { "SU": { "exercises": [...] } }
+      Object.keys(dayObj).forEach(dayName => {
+        trainingDays.push({
+          name: dayName,
+          data: dayObj[dayName]
+        });
+      });
+    }
 
     return (
       <div className="bg-gradient-to-br from-white to-light/50 rounded-3xl shadow-2xl p-10 mb-12 border border-light/30 backdrop-blur-sm">
@@ -1333,33 +1352,40 @@ const FullPrescriptionView = () => {
                 <div className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Séries</div>
                 <div className="text-lg font-bold text-primary/80">{trainingParams.sets}</div>
               </div>
-              <div className="bg-white p-4 rounded-xl shadow-md">
-                <div className="text-xs text-accent font-bold uppercase tracking-wider mb-2">Repetições</div>
-                <div className="text-lg font-bold text-accent/80">{trainingParams.repetitions.min}-{trainingParams.repetitions.max}</div>
-              </div>
+              {trainingParams.repetitions && (
+                <div className="bg-white p-4 rounded-xl shadow-md">
+                  <div className="text-xs text-accent font-bold uppercase tracking-wider mb-2">Repetições</div>
+                  <div className="text-lg font-bold text-accent/80">{trainingParams.repetitions.min}-{trainingParams.repetitions.max}</div>
+                </div>
+              )}
               <div className="bg-white p-4 rounded-xl shadow-md">
                 <div className="text-xs text-secondary font-bold uppercase tracking-wider mb-2">Pausa</div>
                 <div className="text-sm font-semibold text-gray-700">{trainingParams.pause_time}</div>
               </div>
-              <div className="bg-white p-4 rounded-xl shadow-md">
-                <div className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Tempo Concêntrico</div>
-                <div className="text-sm font-semibold text-gray-700">{trainingParams.concentric_contraction_time}</div>
-              </div>
+              {trainingParams.concentric_contraction_tempo && (
+                <div className="bg-white p-4 rounded-xl shadow-md">
+                  <div className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Tempo Concêntrico</div>
+                  <div className="text-sm font-semibold text-gray-700">{trainingParams.concentric_contraction_tempo}</div>
+                </div>
+              )}
+              {trainingParams.eccentric_contraction_tempo && (
+                <div className="bg-white p-4 rounded-xl shadow-md">
+                  <div className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Tempo Excêntrico</div>
+                  <div className="text-sm font-semibold text-gray-700">{trainingParams.eccentric_contraction_tempo}</div>
+                </div>
+              )}
             </div>
           </div>
         )}
 
         <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {trainingDays.map((dayObj, index) => {
-            const [dayName, dayData] = Object.entries(dayObj)[0];
-            return (
-              <TrainingDayCard
-                key={index}
-                dayName={dayName}
-                dayData={dayData}
-              />
-            );
-          })}
+          {trainingDays.map((day, index) => (
+            <TrainingDayCard
+              key={index}
+              dayName={day.name}
+              dayData={day.data}
+            />
+          ))}
         </div>
       </div>
     );
@@ -1440,7 +1466,7 @@ const FullPrescriptionView = () => {
         </div>
 
         {Object.entries(prescription)
-          .filter(([key]) => key.startsWith('microcycle'))
+          .filter(([key]) => key.toLowerCase().startsWith('microcycle'))
           .map(([microcycleName, microcycleData]) => (
             <MicrocycleCard
               key={microcycleName}
