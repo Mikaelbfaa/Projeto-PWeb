@@ -36,6 +36,7 @@ const initialState = {
   userProfile: null,
   partialPrescription: null,
   fullPrescription: null,
+  prescriptionHistory: [],
   adminData: {
     muscleGroups: [],
     strengthExercises: [],
@@ -62,6 +63,18 @@ function appReducer(state, action) {
       return { ...state, partialPrescription: action.payload };
     case 'SET_FULL_PRESCRIPTION':
       return { ...state, fullPrescription: action.payload };
+    case 'ADD_TO_PRESCRIPTION_HISTORY':
+      const newPrescription = {
+        id: Date.now(),
+        createdAt: new Date().toLocaleString('pt-BR'),
+        userProfile: action.userProfile,
+        partialPrescription: action.partialPrescription,
+        fullPrescription: action.fullPrescription
+      };
+      return { 
+        ...state, 
+        prescriptionHistory: [newPrescription, ...state.prescriptionHistory] 
+      };
     case 'SET_ADMIN_DATA':
       return { 
         ...state, 
@@ -241,7 +254,7 @@ const Header = () => {
             <div className="p-2 rounded-xl bg-primary/10">
               <Dumbbell className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-secondary">
               FitnessPro AI
             </h1>
           </button>
@@ -348,12 +361,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-dotted">
-      <section className="bg-gradient-to-r from-primary to-secondary text-light py-32 relative overflow-hidden">
-        
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-light/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
-        </div>
+      <section className="bg-gradient-to-br from-secondary/90 via-teal-500 to-teal-700 text-light py-32 relative overflow-hidden">
         
         <div className="container mx-auto px-4 text-center relative">
           <div className="mb-8">
@@ -362,17 +370,13 @@ const HomePage = () => {
             </div>
           </div>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
-            <span className="bg-gradient-to-r from-light to-accent bg-clip-text text-transparent">
-              Sistema de Prescrição
-            </span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-light">
+            Sistema de Prescrição
             <br />
-            <span className="bg-gradient-to-r from-accent to-light bg-clip-text text-transparent">
-              Inteligente de Treinos
-            </span>
+            Inteligente de Treinos
           </h1>
           
-          <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed text-light/80">
+          <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed text-light font-medium">
             Gere planos de treino personalizados, 
             baseados em evidências científicas e adaptados às suas condições de saúde.
           </p>
@@ -380,7 +384,7 @@ const HomePage = () => {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <button
               onClick={() => dispatch({ type: 'SET_PAGE', payload: 'profile' })}
-              className="bg-accent text-primary px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:bg-accent/80 transition-all duration-300 inline-flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-105 group"
+              className="bg-white text-primary px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:bg-white/90 transition-all duration-300 inline-flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-105 group"
             >
               Começar Avaliação
               <ChevronRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform duration-300" />
@@ -399,7 +403,7 @@ const HomePage = () => {
       <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
               Funcionalidades Principais
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -412,7 +416,7 @@ const HomePage = () => {
               const Icon = feature.icon;
               return (
                 <div key={index} className={`bg-gradient-to-br ${feature.bgColor} p-8 rounded-3xl shadow-xl text-center hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100`}>
-                  <div className={`inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-r ${feature.color} text-primary mb-6 shadow-lg`}>
+                  <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-secondary text-light mb-6 shadow-lg">
                     <Icon className="h-8 w-8" />
                   </div>
                   <h3 className="text-2xl font-bold mb-4 text-primary">{feature.title}</h3>
@@ -424,25 +428,20 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-primary to-secondary py-24 relative overflow-hidden">
-        
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-light/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-accent/20 rounded-full blur-3xl"></div>
-        </div>
+      <section className="bg-gradient-to-br from-secondary/90 via-teal-500 to-teal-700 py-24 relative overflow-hidden">
         
         <div className="container mx-auto px-4 text-center relative">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-light">
               Pronto para transformar seus treinos?
             </h2>
-            <p className="text-xl md:text-2xl text-light/80 mb-12 leading-relaxed">
+            <p className="text-xl md:text-2xl text-light font-medium mb-12 leading-relaxed">
               Crie seu perfil completo e receba recomendações personalizadas em minutos.
             </p>
             
             
             
-            <div className="mt-12 flex justify-center items-center space-x-8 text-light/80">
+            <div className="mt-12 flex justify-center items-center space-x-8 text-light font-medium">
               <div className="flex items-center">
                 <CheckCircle className="h-5 w-5 mr-2" />
                 <span>100% Gratuito</span>
@@ -565,7 +564,7 @@ const ProfilePage = () => {
           <div className="space-y-6">
             <div className="bg-gradient-to-r from-accent/20 to-accent/10 p-6 rounded-2xl border-2 border-accent/50 mb-6">
               <div className="flex items-center mb-4">
-                <div className="p-2 rounded-xl bg-accent text-primary mr-3">
+                <div className="p-2 rounded-xl bg-secondary text-light mr-3">
                   <User className="h-5 w-5" />
                 </div>
                 <h3 className="text-lg font-bold text-primary">Você é iniciante?</h3>
@@ -924,7 +923,7 @@ const ProfilePage = () => {
             ) : (
               <button
                 onClick={handleSubmit}
-                className="flex items-center px-6 py-2 bg-accent text-primary rounded-lg hover:bg-accent/80"
+                className="flex items-center px-6 py-2 bg-secondary text-light rounded-lg hover:bg-secondary/80"
               >
                 Gerar Prescrição
                 <CheckCircle className="h-4 w-4 ml-2" />
@@ -949,6 +948,7 @@ const PrescriptionPage = () => {
     progression_status: ''
   });
   const [showFullPrescription, setShowFullPrescription] = useState(false);
+  const [activeTab, setActiveTab] = useState('new'); // 'new' ou 'history'
 
   useEffect(() => {
     if (state.partialPrescription) {
@@ -982,6 +982,15 @@ const PrescriptionPage = () => {
       
       const response = await apiService.generateFullPrescription(request);
       dispatch({ type: 'SET_FULL_PRESCRIPTION', payload: response });
+      
+      // Adicionar ao histórico
+      dispatch({ 
+        type: 'ADD_TO_PRESCRIPTION_HISTORY',
+        userProfile: state.userProfile,
+        partialPrescription: state.partialPrescription,
+        fullPrescription: response
+      });
+      
       setShowFullPrescription(true);
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: 'Erro ao gerar prescrição completa' });
@@ -1016,12 +1025,13 @@ const PrescriptionPage = () => {
     </div>
   );
 
-  if (!state.partialPrescription) {
-    return (
-      <div className="min-h-screen bg-light flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Nenhuma prescrição encontrada</h2>
-          <p className="text-gray-600 mb-6">Primeiro você precisa criar um perfil.</p>
+  // Componente para mostrar histórico de prescrições
+  const PrescriptionHistory = () => (
+    <div className="space-y-6">
+      {state.prescriptionHistory.length === 0 ? (
+        <div className="text-center py-12">
+          <h3 className="text-2xl font-bold mb-4 text-primary">Nenhuma prescrição encontrada</h3>
+          <p className="text-gray-600 mb-6">Você ainda não gerou nenhuma prescrição completa.</p>
           <button
             onClick={() => dispatch({ type: 'SET_PAGE', payload: 'profile' })}
             className="bg-secondary text-light px-6 py-3 rounded-lg hover:bg-secondary/80"
@@ -1029,9 +1039,50 @@ const PrescriptionPage = () => {
             Criar Perfil
           </button>
         </div>
-      </div>
-    );
-  }
+      ) : (
+        state.prescriptionHistory.map(prescription => (
+          <div key={prescription.id} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-bold text-primary">
+                  Prescrição #{prescription.id}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Criado em: {prescription.createdAt}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Usuário: {prescription.userProfile.id}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  dispatch({ type: 'SET_FULL_PRESCRIPTION', payload: prescription.fullPrescription });
+                  setShowFullPrescription(true);
+                }}
+                className="bg-secondary text-light px-4 py-2 rounded-lg hover:bg-secondary/80 transition-colors"
+              >
+                Ver Detalhes
+              </button>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <span className="font-semibold text-primary">Divisão:</span>
+                <p>{prescription.fullPrescription.division_type}</p>
+              </div>
+              <div>
+                <span className="font-semibold text-primary">Sequência:</span>
+                <p>{prescription.fullPrescription.sequency_type}</p>
+              </div>
+              <div>
+                <span className="font-semibold text-primary">Periodização:</span>
+                <p>{prescription.fullPrescription.periodization_type}</p>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
 
   if (state.loading) {
     return <LoadingSpinner message="Gerando plano de treino completo..." />;
@@ -1052,12 +1103,44 @@ const PrescriptionPage = () => {
         )}
 
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h1 className="text-3xl font-bold text-center mb-2 text-primary">Opções de Prescrição</h1>
-          <p className="text-center text-gray-600 mb-8">
-            Seu nível foi classificado como: <span className="font-semibold text-secondary">
-              {state.partialPrescription.level}
-            </span>
-          </p>
+          <h1 className="text-3xl font-bold text-center mb-6 text-primary">Prescrições</h1>
+          
+          {/* Tabs */}
+          <div className="flex justify-center mb-8">
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setActiveTab('new')}
+                className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                  activeTab === 'new' 
+                    ? 'bg-secondary text-light' 
+                    : 'text-gray-600 hover:text-primary'
+                }`}
+              >
+                Nova Prescrição
+              </button>
+              <button
+                onClick={() => setActiveTab('history')}
+                className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                  activeTab === 'history' 
+                    ? 'bg-secondary text-light' 
+                    : 'text-gray-600 hover:text-primary'
+                }`}
+              >
+                Histórico ({state.prescriptionHistory.length})
+              </button>
+            </div>
+          </div>
+
+          {/* Conteúdo baseado na aba ativa */}
+          {activeTab === 'history' ? (
+            <PrescriptionHistory />
+          ) : state.partialPrescription ? (
+            <div>
+              <p className="text-center text-gray-600 mb-8">
+                Seu nível foi classificado como: <span className="font-semibold text-secondary">
+                  {state.partialPrescription.level}
+                </span>
+              </p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <OptionSelector
@@ -1121,15 +1204,28 @@ const PrescriptionPage = () => {
             )}
           </div>
 
-          <div className="text-center">
-            <button
-              onClick={generateFullPrescription}
-              className="bg-accent text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-accent/80 transition-colors inline-flex items-center"
-            >
-              Gerar Plano Completo
-              <FileText className="ml-2 h-5 w-5" />
-            </button>
-          </div>
+              <div className="text-center">
+                <button
+                  onClick={generateFullPrescription}
+                  className="bg-secondary text-light px-8 py-4 rounded-lg text-lg font-semibold hover:bg-secondary/80 transition-colors inline-flex items-center"
+                >
+                  Gerar Plano Completo
+                  <FileText className="ml-2 h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <h3 className="text-2xl font-bold mb-4 text-primary">Nenhuma prescrição parcial encontrada</h3>
+              <p className="text-gray-600 mb-6">Primeiro você precisa criar um perfil e gerar uma prescrição parcial.</p>
+              <button
+                onClick={() => dispatch({ type: 'SET_PAGE', payload: 'profile' })}
+                className="bg-secondary text-light px-6 py-3 rounded-lg hover:bg-secondary/80"
+              >
+                Criar Perfil
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -1174,7 +1270,7 @@ const FullPrescriptionView = () => {
   const TrainingDayCard = ({ dayName, dayData }) => (
     <div className="bg-gradient-to-br from-white to-secondary/20 p-8 rounded-3xl shadow-xl border border-secondary/30 hover:shadow-2xl transition-all duration-500">
       <div className="flex items-center mb-6">
-        <div className="p-3 rounded-2xl bg-gradient-to-r from-secondary to-accent text-primary mr-4 shadow-lg">
+        <div className="p-3 rounded-2xl bg-secondary text-light mr-4 shadow-lg">
           <Calendar className="h-6 w-6" />
         </div>
         <h3 className="text-2xl font-bold text-primary uppercase tracking-wide">{dayName}</h3>
@@ -1207,10 +1303,10 @@ const FullPrescriptionView = () => {
     return (
       <div className="bg-gradient-to-br from-white to-light/50 rounded-3xl shadow-2xl p-10 mb-12 border border-light/30 backdrop-blur-sm">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-r from-secondary to-accent text-primary mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-secondary text-light mb-4 shadow-lg">
             <BarChart3 className="h-8 w-8" />
           </div>
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
+          <h2 className="text-4xl font-bold text-primary">
             {microcycleName.replace('_', ' ').toUpperCase()}
           </h2>
         </div>
@@ -1242,11 +1338,11 @@ const FullPrescriptionView = () => {
                 <div className="text-lg font-bold text-accent/80">{trainingParams.repetitions.min}-{trainingParams.repetitions.max}</div>
               </div>
               <div className="bg-white p-4 rounded-xl shadow-md">
-                <div className="text-xs text-red-600 font-bold uppercase tracking-wider mb-2">Pausa</div>
+                <div className="text-xs text-secondary font-bold uppercase tracking-wider mb-2">Pausa</div>
                 <div className="text-sm font-semibold text-gray-700">{trainingParams.pause_time}</div>
               </div>
               <div className="bg-white p-4 rounded-xl shadow-md">
-                <div className="text-xs text-indigo-600 font-bold uppercase tracking-wider mb-2">Tempo Concêntrico</div>
+                <div className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Tempo Concêntrico</div>
                 <div className="text-sm font-semibold text-gray-700">{trainingParams.concentric_contraction_time}</div>
               </div>
             </div>
@@ -1274,10 +1370,10 @@ const FullPrescriptionView = () => {
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="bg-gradient-to-br from-white to-light/50 rounded-3xl shadow-2xl p-12 mb-12 border border-light/30 backdrop-blur-sm">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-gradient-to-r from-secondary to-accent text-primary mb-6 shadow-lg">
+            <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-secondary text-light mb-6 shadow-lg">
               <FileText className="h-10 w-10" />
             </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent mb-4">
+            <h1 className="text-5xl font-bold text-primary mb-4">
               Sua Prescrição de Treino
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -1298,7 +1394,7 @@ const FullPrescriptionView = () => {
             
             <div className="bg-gradient-to-br from-accent/20 to-accent/10 p-6 rounded-2xl border border-accent/30 shadow-lg">
               <div className="flex items-center mb-4">
-                <div className="p-2 rounded-xl bg-accent text-primary mr-3">
+                <div className="p-2 rounded-xl bg-secondary text-light mr-3">
                   <TrendingUp className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-bold text-accent/80">Sequência</h3>
@@ -1320,7 +1416,7 @@ const FullPrescriptionView = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
             <button
               onClick={() => window.print()}
-              className="bg-gradient-to-r from-secondary to-accent text-primary px-8 py-4 rounded-2xl hover:from-accent hover:to-secondary inline-flex items-center justify-center font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="bg-secondary text-light px-8 py-4 rounded-2xl hover:bg-secondary/90 inline-flex items-center justify-center font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
             >
               <Download className="mr-3 h-5 w-5" />
               Imprimir Prescrição
@@ -1335,7 +1431,7 @@ const FullPrescriptionView = () => {
                 a.download = 'prescricao-treino.json';
                 a.click();
               }}
-              className="bg-gradient-to-r from-accent to-secondary text-primary px-8 py-4 rounded-2xl hover:from-secondary hover:to-accent inline-flex items-center justify-center font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="bg-secondary/80 text-light px-8 py-4 rounded-2xl hover:bg-secondary inline-flex items-center justify-center font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
             >
               <Download className="mr-3 h-5 w-5" />
               Exportar JSON
