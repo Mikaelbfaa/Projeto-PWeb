@@ -1403,7 +1403,8 @@ const FullPrescriptionView = () => {
 
   const MicrocycleCard = ({ microcycleName, microcycleData }) => {
     const isExpanded = expandedMicrocycles[microcycleName];
-    const trainingParams = microcycleData[0]?.training_parameters;
+    const trainingParams = microcycleData.training_parameters;
+    console.log(JSON.stringify(microcycleData, null, 2));
     
     // Extrair os dias de treino
     const trainingDays = [];
