@@ -8,6 +8,11 @@
   background-size: 20px 20px;
 }
 
+.dark .bg-dotted {
+  background-color: #1E1E1E;
+  background-image: radial-gradient(circle, #4B5563 1px, rgba(0, 0, 0, 0) 1px);
+}
+
 /* Custom animations and utilities */
 @layer base {
   html {

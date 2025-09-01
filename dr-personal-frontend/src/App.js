@@ -24,6 +24,8 @@ import {
   BarChart3,
   Shield,
   Dumbbell,
+  Moon,
+  Sun,
 } from 'lucide-react';
 
 // Context for global state management
@@ -46,6 +48,7 @@ const initialState = {
   },
   loading: false,
   error: null,
+  darkTheme: localStorage.getItem('darkTheme') === 'true',
 };
 
 // Reducer for state management
@@ -80,6 +83,8 @@ function appReducer(state, action) {
         ...state, 
         adminData: { ...state.adminData, [action.dataType]: action.payload } 
       };
+    case 'TOGGLE_DARK_THEME':
+      return { ...state, darkTheme: !state.darkTheme };
     default:
       return state;
   }
@@ -182,21 +187,21 @@ const apiService = {
 // Loading Component
 const LoadingSpinner = ({ message = "Carregando..." }) => (
   <div className="flex flex-col items-center justify-center py-12">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary"></div>
-    <p className="mt-4 text-gray-600">{message}</p>
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary dark:border-dark-secondary"></div>
+    <p className="mt-4 text-gray-600 dark:text-gray-300">{message}</p>
   </div>
 );
 
 // Error Component
 const ErrorMessage = ({ error, onDismiss }) => (
-  <div className="bg-accent/20 border border-accent/30 rounded-lg p-4 mb-4">
+  <div className="bg-accent/20 dark:bg-dark-accent/20 border border-accent/30 dark:border-dark-accent/30 rounded-lg p-4 mb-4">
     <div className="flex items-center">
-      <AlertCircle className="h-5 w-5 text-accent mr-2" />
-      <span className="text-primary">{error}</span>
+      <AlertCircle className="h-5 w-5 text-accent dark:text-dark-accent mr-2" />
+      <span className="text-primary dark:text-dark-primary">{error}</span>
       {onDismiss && (
         <button 
           onClick={onDismiss}
-          className="ml-auto text-accent hover:text-accent/80"
+          className="ml-auto text-accent dark:text-dark-accent hover:text-accent/80 dark:hover:text-dark-accent/80"
         >
           ✕
         </button>
@@ -218,17 +223,17 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white text-primary shadow-md fixed top-0 left-0 right-0 z-50">
+    <header className="bg-white text-primary dark:bg-dark-bg-secondary dark:text-dark-primary shadow-md fixed top-0 left-0 right-0 z-50 transition-colors duration-300">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <button
             onClick={() => dispatch({ type: 'SET_PAGE', payload: 'home' })}
             className="flex items-center space-x-3 group cursor-pointer transition-all duration-300 hover:scale-105"
           >
-            <div className="p-2 rounded-xl bg-primary/10">
-              <Dumbbell className="h-8 w-8 text-primary" />
+            <div className="p-2 rounded-xl bg-primary/10 dark:bg-dark-secondary/20">
+              <Dumbbell className="h-8 w-8 text-primary dark:text-dark-secondary" />
             </div>
-            <h1 className="text-2xl font-bold text-secondary">
+            <h1 className="text-2xl font-bold text-secondary dark:text-dark-accent">
               FitnessPro AI
             </h1>
           </button>
@@ -243,8 +248,8 @@ const Header = () => {
                     onClick={() => dispatch({ type: 'SET_PAGE', payload: item.id })}
                     className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-300 ${
                       state.currentPage === item.id 
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-primary/80 hover:text-primary hover:bg-primary/10'
+                        ? 'bg-primary/10 text-primary dark:bg-dark-secondary/20 dark:text-dark-secondary'
+                        : 'text-primary/80 hover:text-primary hover:bg-primary/10 dark:text-gray-300 dark:hover:text-dark-secondary dark:hover:bg-dark-secondary/10'
                     }`}
                   >
                     <Icon className={`h-4 w-4 transition-transform duration-300 ${
@@ -255,22 +260,34 @@ const Header = () => {
                 );
               })}
             </nav>
+            
+            <button
+              onClick={() => dispatch({ type: 'TOGGLE_DARK_THEME' })}
+              className="p-3 rounded-xl transition-all duration-300 hover:scale-110 bg-primary/10 text-primary hover:bg-primary/20 dark:bg-dark-secondary/20 dark:text-dark-secondary dark:hover:bg-dark-secondary/30"
+              title={state.darkTheme ? 'Modo Claro' : 'Modo Escuro'}
+            >
+              {state.darkTheme ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
           </div>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-3 rounded-xl bg-primary/10"
+            className="md:hidden p-3 rounded-xl bg-primary/10 dark:bg-dark-secondary/20"
           >
             <div className={`w-5 h-5 flex flex-col justify-center items-center transition-all duration-300 ${mobileMenuOpen ? 'rotate-90' : ''}`}>
-              <span className={`block w-5 h-0.5 bg-primary ${mobileMenuOpen ? 'rotate-45 translate-y-0.5' : '-translate-y-1'}`}></span>
-              <span className={`block w-5 h-0.5 bg-primary ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
-              <span className={`block w-5 h-0.5 bg-primary ${mobileMenuOpen ? '-rotate-45 -translate-y-0.5' : 'translate-y-1'}`}></span>
+              <span className={`block w-5 h-0.5 bg-primary dark:bg-dark-secondary ${mobileMenuOpen ? 'rotate-45 translate-y-0.5' : '-translate-y-1'}`}></span>
+              <span className={`block w-5 h-0.5 bg-primary dark:bg-dark-secondary ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
+              <span className={`block w-5 h-0.5 bg-primary dark:bg-dark-secondary ${mobileMenuOpen ? '-rotate-45 -translate-y-0.5' : 'translate-y-1'}`}></span>
             </div>
           </button>
         </div>
 
         {mobileMenuOpen && (
-          <nav className="md:hidden mt-6 pb-4 pt-6 border-t border-primary/20">
+          <nav className="md:hidden mt-6 pb-4 pt-6 border-t border-primary/20 dark:border-gray-700">
             {navItems.map(item => {
               const Icon = item.icon;
               return (
@@ -282,8 +299,8 @@ const Header = () => {
                   }}
                   className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl mb-2 transition-all duration-300 ${
                     state.currentPage === item.id 
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-primary/80 hover:text-primary hover:bg-primary/10'
+                      ? 'bg-primary/10 text-primary dark:bg-dark-secondary/20 dark:text-dark-secondary'
+                      : 'text-primary/80 hover:text-primary hover:bg-primary/10 dark:text-gray-300 dark:hover:text-dark-secondary dark:hover:bg-dark-secondary/10'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -300,46 +317,38 @@ const Header = () => {
 
 // Home Page
 const HomePage = () => {
-  const { dispatch } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
 
   const features = [
     {
       icon: TrendingUp,
       title: "Análise Inteligente",
       description: "IA avançada para análise de perfil e classificação automática de nível",
-      color: "from-secondary to-accent",
-      bgColor: "from-light to-white"
     },
     {
       icon: Heart,
       title: "Saúde Personalizada",
       description: "Adaptação baseada em condições de saúde e limitações físicas",
-      color: "from-secondary to-accent",
-      bgColor: "from-light to-white"
     },
     {
       icon: Calendar,
       title: "Progressão Temporal",
       description: "Planos com mesociclos e microciclos para evolução contínua",
-      color: "from-secondary to-accent",
-      bgColor: "from-light to-white"
     },
     {
       icon: Activity,
       title: "Otimização Científica",
       description: "Algoritmos de programação linear para seleção ideal de exercícios",
-      color: "from-secondary to-accent",
-      bgColor: "from-light to-white"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-dotted">
-      <section className="bg-gradient-to-br from-secondary/90 via-teal-500 to-teal-700 text-light py-32 relative overflow-hidden">
+    <div className="min-h-screen bg-dotted dark:bg-dark-bg-primary">
+      <section className="bg-gradient-to-br from-secondary/90 via-teal-500 to-teal-700 text-light py-32 relative overflow-hidden transition-colors duration-500 dark:from-dark-secondary/90 dark:via-purple-700 dark:to-purple-800">
         
         <div className="container mx-auto px-4 text-center relative">
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center p-4 rounded-3xl bg-light/10 backdrop-blur-sm border border-light/20 mb-6">
+            <div className="inline-flex items-center justify-center p-4 rounded-3xl bg-light/10 backdrop-blur-sm border border-light/20 dark:bg-dark-secondary/20 dark:border-dark-accent/30 mb-6">
               <Dumbbell className="h-16 w-16 text-light" />
             </div>
           </div>
@@ -358,7 +367,7 @@ const HomePage = () => {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <button
               onClick={() => dispatch({ type: 'SET_PAGE', payload: 'profile' })}
-              className="bg-white text-primary px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:bg-white/90 transition-all duration-300 inline-flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-105 group"
+              className="bg-white text-primary hover:bg-white/90 dark:bg-dark-accent dark:text-dark-bg-primary dark:hover:bg-dark-accent/90 px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold transition-all duration-300 inline-flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-105 group"
             >
               Começar Avaliação
               <ChevronRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform duration-300" />
@@ -366,7 +375,7 @@ const HomePage = () => {
             
             <button
               onClick={() => dispatch({ type: 'SET_PAGE', payload: 'admin' })}
-              className="bg-transparent border-2 border-light text-light px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:bg-light hover:text-primary transition-all duration-300 inline-flex items-center justify-center backdrop-blur-sm hover:scale-105"
+              className="bg-transparent border-2 border-light text-light hover:bg-light hover:text-primary dark:border-dark-accent dark:text-dark-accent dark:hover:bg-dark-accent dark:hover:text-dark-bg-primary px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold transition-all duration-300 inline-flex items-center justify-center backdrop-blur-sm hover:scale-105"
             >
               Área Administrativa
             </button>
@@ -374,13 +383,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="py-24 dark:bg-dark-bg-primary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary dark:text-dark-accent">
               Funcionalidades Principais
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Tecnologia de ponta para criar o plano de treino perfeito para você
             </p>
           </div>
@@ -389,12 +398,12 @@ const HomePage = () => {
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <div key={index} className={`bg-gradient-to-br ${feature.bgColor} p-8 rounded-3xl shadow-xl text-center hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100`}>
-                  <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-secondary text-light mb-6 shadow-lg">
+                <div key={index} className="bg-gradient-to-br from-light to-white border-gray-100 dark:bg-gradient-to-br dark:from-dark-bg-secondary dark:to-dark-bg-secondary/80 dark:border-gray-700 p-8 rounded-3xl shadow-xl text-center hover:shadow-2xl transition-all duration-300 hover:scale-105 border">
+                  <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-secondary dark:bg-dark-secondary text-light mb-6 shadow-lg">
                     <Icon className="h-8 w-8" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-primary">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-2xl font-bold mb-4 text-primary dark:text-dark-accent">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.description}</p>
                 </div>
               );
             })}
@@ -402,7 +411,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-secondary/90 via-teal-500 to-teal-700 py-24 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-secondary/90 via-teal-500 to-teal-700 py-24 relative overflow-hidden transition-colors duration-500 dark:from-dark-secondary/90 dark:via-purple-700 dark:to-purple-800">
         
         <div className="container mx-auto px-4 text-center relative">
           <div className="max-w-4xl mx-auto">
@@ -602,13 +611,13 @@ const ProfilePage = () => {
           <div className="space-y-6">
             <div className="bg-gradient-to-r from-accent/20 to-accent/10 p-6 rounded-2xl border-2 border-accent/50 mb-6">
               <div className="flex items-center mb-4">
-                <div className="p-2 rounded-xl bg-secondary text-light mr-3">
+                <div className="p-2 rounded-xl bg-secondary dark:bg-dark-secondary text-light mr-3">
                   <User className="h-5 w-5" />
                 </div>
-                <h3 className="text-lg font-bold text-primary">Você é iniciante?</h3>
+                <h3 className="text-lg font-bold text-primary dark:text-dark-primary">Você é iniciante?</h3>
               </div>
               
-              <p className="text-primary/80 mb-4 text-sm">
+              <p className="text-primary/80 dark:text-dark-primary/80 mb-4 text-sm">
                 Se você nunca fez musculação ou tem pouca experiência, marque esta opção para pular as etapas técnicas.
               </p>
               
@@ -619,9 +628,9 @@ const ProfilePage = () => {
                     name="beginnerMode"
                     checked={isBeginnerMode}
                     onChange={() => handleBeginnerToggle(true)}
-                    className="text-secondary focus:ring-secondary mr-2"
+                    className="text-secondary dark:text-dark-secondary focus:ring-secondary dark:focus:ring-dark-secondary mr-2"
                   />
-                  <span className="font-medium text-primary">Sim, sou iniciante</span>
+                  <span className="font-medium text-primary dark:text-dark-primary">Sim, sou iniciante</span>
                 </label>
                 <label className="flex items-center cursor-pointer">
                   <input
@@ -629,34 +638,34 @@ const ProfilePage = () => {
                     name="beginnerMode"
                     checked={!isBeginnerMode}
                     onChange={() => handleBeginnerToggle(false)}
-                    className="text-secondary focus:ring-secondary mr-2"
+                    className="text-secondary dark:text-dark-secondary focus:ring-secondary dark:focus:ring-dark-secondary mr-2"
                   />
-                  <span className="font-medium text-gray-700">Tenho experiência</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-300">Tenho experiência</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 ID do Usuário
               </label>
               <input
                 type="text"
                 value={formData.id}
                 onChange={(e) => handleInputChange('id', e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                 placeholder="Digite seu ID único"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Gênero
               </label>
               <select
                 value={formData.gender}
                 onChange={(e) => handleInputChange('gender', e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
               >
                 <option value="MALE">Masculino</option>
                 <option value="FEMALE">Feminino</option>
@@ -664,41 +673,41 @@ const ProfilePage = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Data de Nascimento
               </label>
               <input
                 type="date"
                 value={formData.birth_date}
                 onChange={(e) => handleInputChange('birth_date', e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
               />
             </div>
             
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Frequência Semanal
                 </label>
                 <input
                   type="number"
                   value={formData.weekly_frequency}
                   onChange={(e) => handleInputChange('weekly_frequency', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                   min="1"
                   max="7"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Duração da Sessão (min)
                 </label>
                 <input
                   type="number"
                   value={formData.session_time}
                   onChange={(e) => handleInputChange('session_time', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                   min="15"
                   max="180"
                 />
@@ -711,55 +720,55 @@ const ProfilePage = () => {
         return (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Tempo Ininterrupto de Treino (meses)
               </label>
               <input
                 type="number"
                 value={formData.uninterrupted_training_time}
                 onChange={(e) => handleInputChange('uninterrupted_training_time', e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                 min="0"
                 max="120"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Período de Destreino (meses)
               </label>
               <input
                 type="number"
                 value={formData.detraining}
                 onChange={(e) => handleInputChange('detraining', e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                 min="0"
                 max="120"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Experiência Prévia (anos)
               </label>
               <input
                 type="number"
                 value={formData.previous_experience}
                 onChange={(e) => handleInputChange('previous_experience', e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                 min="0"
                 max="50"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nível Técnico
               </label>
               <select
                 value={formData.technique}
                 onChange={(e) => handleInputChange('technique', e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
               >
                 <option value="BAD">Ruim</option>
                 <option value="REGULAR">Médio</option>
@@ -773,59 +782,59 @@ const ProfilePage = () => {
       case 3:
         return (
           <div className="space-y-6">
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               Informe suas cargas máximas nos exercícios principais (em kg). Deixe em 0 se não souber.
             </p>
             
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Supino (kg)
                 </label>
                 <input
                   type="number"
                   value={formData.strength_values.bench_press}
                   onChange={(e) => handleInputChange('strength_values.bench_press', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                   min="0"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Puxada Alta (kg)
                 </label>
                 <input
                   type="number"
                   value={formData.strength_values.lat_pulldown}
                   onChange={(e) => handleInputChange('strength_values.lat_pulldown', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                   min="0"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Agachamento (kg)
                 </label>
                 <input
                   type="number"
                   value={formData.strength_values.squat}
                   onChange={(e) => handleInputChange('strength_values.squat', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                   min="0"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Levantamento Terra (kg)
                 </label>
                 <input
                   type="number"
                   value={formData.strength_values.deadlift}
                   onChange={(e) => handleInputChange('strength_values.deadlift', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
                   min="0"
                 />
               </div>
@@ -837,10 +846,10 @@ const ProfilePage = () => {
         return (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                 Condições de Saúde
               </label>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                 Selecione as condições de saúde que se aplicam ao seu caso:
               </p>
               
@@ -851,9 +860,9 @@ const ProfilePage = () => {
                       type="checkbox"
                       checked={formData.health_conditions.includes(condition)}
                       onChange={() => handleHealthConditionToggle(condition)}
-                      className="rounded border-gray-300 text-secondary focus:ring-secondary"
+                      className="rounded border-gray-300 text-secondary dark:text-dark-secondary focus:ring-secondary dark:focus:ring-dark-secondary"
                     />
-                    <span className="text-sm">{condition}</span>
+                    <span className="text-sm dark:text-dark-primary">{condition}</span>
                   </label>
                 ))}
               </div>
@@ -870,8 +879,8 @@ const ProfilePage = () => {
     return <LoadingSpinner message="Analisando seu perfil..." />;
   }
 
-  return (
-    <div className="min-h-screen bg-dotted py-8">
+    return (
+    <div className="min-h-screen py-8 bg-dotted dark:bg-dark-bg-primary">
       <div className="container mx-auto px-4 max-w-4xl">
         {state.error && (
           <ErrorMessage 
@@ -880,8 +889,8 @@ const ProfilePage = () => {
           />
         )}
 
-        <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
-          <h1 className="text-3xl font-bold text-center mb-8 text-primary">Criação de Perfil</h1>
+        <div className="bg-white border-gray-200 dark:bg-dark-bg-secondary dark:border-gray-700 rounded-lg shadow-lg p-8 border">
+          <h1 className="text-3xl font-bold text-center mb-8 text-primary dark:text-dark-accent">Criação de Perfil</h1>
           
           <div className="flex justify-center mb-8">
             <div className="flex items-center space-x-4">
@@ -894,9 +903,9 @@ const ProfilePage = () => {
                 return (
                   <div key={step.id} className="flex items-center">
                     <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                      isActive ? 'bg-secondary text-light' :
+                      isActive ? 'bg-secondary text-light dark:bg-dark-secondary' :
                       isSkipped ? 'bg-gray-200 text-gray-400' :
-                      isCompleted ? 'bg-accent text-primary' : 'bg-gray-300'
+                      isCompleted ? 'bg-accent text-primary dark:bg-dark-accent dark:text-dark-primary' : 'bg-gray-300'
                     }`}>
                       {isCompleted && !isSkipped ? (
                         <CheckCircle className="h-6 w-6" />
@@ -907,9 +916,9 @@ const ProfilePage = () => {
                       )}
                     </div>
                     <span className={`ml-2 text-sm font-medium ${
-                      isActive ? 'text-secondary' : 
+                      isActive ? 'text-secondary dark:text-dark-secondary' : 
                       isSkipped ? 'text-gray-400' :
-                      isCompleted ? 'text-accent' : 'text-gray-500'
+                      isCompleted ? 'text-accent dark:text-dark-accent' : 'text-gray-500 dark:text-gray-200'
                     }`}>
                       {step.title}
                       {isSkipped && ' (Pulado)'}
@@ -953,7 +962,7 @@ const ProfilePage = () => {
                     setCurrentStep(prev => prev + 1);
                   }
                 }}
-                className="flex items-center px-4 py-2 bg-secondary text-light rounded-lg hover:bg-secondary/80"
+                className="flex items-center px-4 py-2 bg-secondary text-light dark:bg-dark-secondary rounded-lg hover:bg-secondary/80 dark:hover:bg-dark-secondary/80"
               >
                 Próximo
                 <ChevronRight className="h-4 w-4 ml-1" />
@@ -1044,9 +1053,9 @@ const PrescriptionPage = () => {
   };
 
   const OptionSelector = ({ title, field, options, recommended, description }) => (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-2 text-primary">{title}</h3>
-      {description && <p className="text-sm text-gray-600 mb-4">{description}</p>}
+    <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold mb-2 text-primary dark:text-dark-primary">{title}</h3>
+      {description && <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{description}</p>}
       
       <div className="space-y-2">
         {options.map(option => (
@@ -1057,9 +1066,9 @@ const PrescriptionPage = () => {
               value={option}
               checked={selectedOptions[field] === option}
               onChange={(e) => handleOptionChange(field, e.target.value)}
-              className="text-secondary"
+              className="text-secondary dark:text-dark-secondary"
             />
-            <span className={option === recommended ? 'font-semibold text-secondary' : 'text-gray-700'}>
+            <span className={`${option === recommended ? 'font-semibold text-secondary dark:text-dark-secondary' : 'text-gray-700 dark:text-gray-300'}`}>
               {option}
               {option === recommended && ' (Recomendado)'}
             </span>
@@ -1074,27 +1083,27 @@ const PrescriptionPage = () => {
     <div className="space-y-6">
       {state.prescriptionHistory.length === 0 ? (
         <div className="text-center py-12">
-          <h3 className="text-2xl font-bold mb-4 text-primary">Nenhuma prescrição encontrada</h3>
-          <p className="text-gray-600 mb-6">Você ainda não gerou nenhuma prescrição completa.</p>
+          <h3 className="text-2xl font-bold mb-4 text-primary dark:text-dark-primary">Nenhuma prescrição encontrada</h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">Você ainda não gerou nenhuma prescrição completa.</p>
           <button
             onClick={() => dispatch({ type: 'SET_PAGE', payload: 'profile' })}
-            className="bg-secondary text-light px-6 py-3 rounded-lg hover:bg-secondary/80"
+            className="bg-secondary text-light dark:bg-dark-secondary px-6 py-3 rounded-lg hover:bg-secondary/80 dark:hover:bg-dark-secondary/80"
           >
             Criar Perfil
           </button>
         </div>
       ) : (
         state.prescriptionHistory.map(prescription => (
-          <div key={prescription.id} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+          <div key={prescription.id} className="bg-white dark:bg-dark-bg-primary rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-xl font-bold text-primary">
+                <h3 className="text-xl font-bold text-primary dark:text-dark-primary">
                   Prescrição #{prescription.id}
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Criado em: {prescription.createdAt}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Usuário: {prescription.userProfile.id}
                 </p>
               </div>
@@ -1103,23 +1112,23 @@ const PrescriptionPage = () => {
                   dispatch({ type: 'SET_FULL_PRESCRIPTION', payload: prescription.fullPrescription });
                   setShowFullPrescription(true);
                 }}
-                className="bg-secondary text-light px-4 py-2 rounded-lg hover:bg-secondary/80 transition-colors"
+                className="bg-secondary text-light dark:bg-dark-secondary px-4 py-2 rounded-lg hover:bg-secondary/80 dark:hover:bg-dark-secondary/80 transition-colors"
               >
                 Ver Detalhes
               </button>
             </div>
             <div className="grid md:grid-cols-3 gap-4 text-sm">
               <div>
-                <span className="font-semibold text-primary">Divisão:</span>
-                <p>{prescription.fullPrescription.division_type}</p>
+                <span className="font-semibold text-primary dark:text-dark-primary">Divisão:</span>
+                <p className="dark:text-gray-300">{prescription.fullPrescription.division_type}</p>
               </div>
               <div>
-                <span className="font-semibold text-primary">Sequência:</span>
-                <p>{prescription.fullPrescription.sequency_type}</p>
+                <span className="font-semibold text-primary dark:text-dark-primary">Sequência:</span>
+                <p className="dark:text-gray-300">{prescription.fullPrescription.sequency_type}</p>
               </div>
               <div>
-                <span className="font-semibold text-primary">Periodização:</span>
-                <p>{prescription.fullPrescription.periodization_type}</p>
+                <span className="font-semibold text-primary dark:text-dark-primary">Periodização:</span>
+                <p className="dark:text-gray-300">{prescription.fullPrescription.periodization_type}</p>
               </div>
             </div>
           </div>
@@ -1137,7 +1146,7 @@ const PrescriptionPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-dotted py-8">
+    <div className="min-h-screen bg-dotted dark:bg-dark-bg-primary py-8">
       <div className="container mx-auto px-4 max-w-6xl">
         {state.error && (
           <ErrorMessage 
@@ -1146,18 +1155,18 @@ const PrescriptionPage = () => {
           />
         )}
 
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h1 className="text-3xl font-bold text-center mb-6 text-primary">Prescrições</h1>
+        <div className="bg-white dark:bg-dark-bg-secondary rounded-lg shadow-lg p-8 mb-8">
+          <h1 className="text-3xl font-bold text-center mb-6 text-primary dark:text-dark-primary">Prescrições</h1>
           
           {/* Tabs */}
           <div className="flex justify-center mb-8">
-            <div className="flex bg-gray-100 rounded-lg p-1">
+            <div className="flex bg-gray-100 dark:bg-dark-bg-primary rounded-lg p-1">
               <button
                 onClick={() => setActiveTab('new')}
                 className={`px-6 py-2 rounded-md font-medium transition-colors ${
                   activeTab === 'new' 
-                    ? 'bg-secondary text-light' 
-                    : 'text-gray-600 hover:text-primary'
+                    ? 'bg-secondary text-light dark:bg-dark-secondary' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-dark-primary'
                 }`}
               >
                 Nova Prescrição
@@ -1166,8 +1175,8 @@ const PrescriptionPage = () => {
                 onClick={() => setActiveTab('history')}
                 className={`px-6 py-2 rounded-md font-medium transition-colors ${
                   activeTab === 'history' 
-                    ? 'bg-secondary text-light' 
-                    : 'text-gray-600 hover:text-primary'
+                    ? 'bg-secondary text-light dark:bg-dark-secondary' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-dark-primary'
                 }`}
               >
                 Histórico ({state.prescriptionHistory.length})
@@ -1260,11 +1269,11 @@ const PrescriptionPage = () => {
             </div>
           ) : (
             <div className="text-center py-12">
-              <h3 className="text-2xl font-bold mb-4 text-primary">Nenhuma prescrição parcial encontrada</h3>
-              <p className="text-gray-600 mb-6">Primeiro você precisa criar um perfil e gerar uma prescrição parcial.</p>
+              <h3 className="text-2xl font-bold mb-4 text-primary dark:text-dark-primary">Nenhuma prescrição parcial encontrada</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">Primeiro você precisa criar um perfil e gerar uma prescrição parcial.</p>
               <button
                 onClick={() => dispatch({ type: 'SET_PAGE', payload: 'profile' })}
-                className="bg-secondary text-light px-6 py-3 rounded-lg hover:bg-secondary/80"
+                className="bg-secondary text-light dark:bg-dark-secondary px-6 py-3 rounded-lg hover:bg-secondary/80 dark:hover:bg-dark-secondary/80"
               >
                 Criar Perfil
               </button>
@@ -1278,106 +1287,128 @@ const PrescriptionPage = () => {
 
 // Full Prescription View
 const FullPrescriptionView = () => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const prescription = state.fullPrescription;
+  const [expandedMicrocycles, setExpandedMicrocycles] = useState({});
+  const [expandedDays, setExpandedDays] = useState({});
 
-  const ExerciseCard = ({ exercise }) => (
-    <div className="bg-gradient-to-br from-white to-light/50 p-6 rounded-2xl border border-light/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-      <div className="flex items-center mb-4">
-        <div className="p-2 rounded-xl bg-secondary/20 text-secondary mr-3">
-          <Activity className="h-5 w-5" />
-        </div>
-        <h4 className="font-bold text-lg text-primary">{exercise.name}</h4>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-secondary/10 p-3 rounded-lg">
-          <div className="text-xs text-secondary font-medium uppercase tracking-wider">Séries</div>
-          <div className="text-xl font-bold text-secondary/80">{exercise.sets}</div>
-        </div>
-        
-        {exercise.count_type === 'repetition' ? (
-          <div className="bg-accent/10 p-3 rounded-lg">
-            <div className="text-xs text-accent font-medium uppercase tracking-wider">Repetições</div>
-            <div className="text-xl font-bold text-accent/80">
+  const toggleMicrocycle = (microcycleName) => {
+    setExpandedMicrocycles(prev => ({
+      ...prev,
+      [microcycleName]: !prev[microcycleName]
+    }));
+  };
+
+  const toggleDay = (dayKey) => {
+    setExpandedDays(prev => ({
+      ...prev,
+      [dayKey]: !prev[dayKey]
+    }));
+  };
+
+  const ExerciseRow = ({ exercise, index }) => {
+    return (
+      <tr className={`transition-colors ${index % 2 === 0 ? 'bg-gray-50 dark:bg-dark-bg-secondary' : 'bg-white dark:bg-dark-bg-primary'} hover:bg-blue-50 dark:hover:bg-purple-900/20`}>
+        <td className="px-4 py-3 text-sm font-medium text-primary dark:text-dark-primary">{exercise.name}</td>
+        <td className="px-4 py-3 text-sm text-center">
+          <span className="inline-flex items-center justify-center w-8 h-8 bg-secondary/10 text-secondary dark:bg-dark-secondary/20 dark:text-dark-secondary rounded-full font-bold">
+            {exercise.sets}
+          </span>
+        </td>
+        <td className="px-4 py-3 text-sm text-center">
+          {exercise.count_type === 'repetition' ? (
+            <span className="inline-flex items-center px-2.5 py-1 bg-accent/10 text-accent dark:bg-dark-accent/20 dark:text-dark-accent rounded-full text-xs font-medium">
               {exercise.repetitions ? `${exercise.repetitions.min}-${exercise.repetitions.max}` : 'N/A'}
-            </div>
-          </div>
-        ) : (
-          <div className="bg-accent/10 p-3 rounded-lg">
-            <div className="text-xs text-accent font-medium uppercase tracking-wider">Tempo</div>
-            <div className="text-xl font-bold text-accent/80">{exercise.execution_time}s</div>
-          </div>
-        )}
-        
-        <div className="bg-primary/10 p-3 rounded-lg">
-          <div className="text-xs text-primary font-medium uppercase tracking-wider">Pausa</div>
-          <div className="text-sm font-semibold text-primary/80">{exercise.pause_time}</div>
-        </div>
-        <div className="bg-light/50 p-3 rounded-lg">
-          <div className="text-xs text-gray-600 font-medium uppercase tracking-wider">Tipo</div>
-          <div className="text-sm font-semibold text-gray-700 capitalize">{exercise.exercise_type || 'strength'}</div>
-        </div>
-      </div>
-    </div>
-  );
+            </span>
+          ) : (
+            <span className="inline-flex items-center px-2.5 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full text-xs font-medium">
+              {exercise.execution_time}s
+            </span>
+          )}
+        </td>
+        <td className="px-4 py-3 text-sm text-center">
+          <span className="font-medium text-gray-600 dark:text-gray-300">{exercise.pause_time}</span>
+        </td>
+        <td className="px-4 py-3 text-sm text-center">
+          <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded text-xs capitalize">
+            {exercise.exercise_type || 'strength'}
+          </span>
+        </td>
+      </tr>
+    );
+  };
 
-  const TrainingDayCard = ({ dayName, dayData }) => {
-    // Verificar se dayData existe e tem exercises
+  const TrainingDayCard = ({ dayName, dayData, microcycleName }) => {
+    const dayKey = `${microcycleName}-${dayName}`;
+    const isExpanded = expandedDays[dayKey];
+
     if (!dayData || !dayData.exercises) {
-      console.warn(`TrainingDayCard: dayData ou exercises não encontrado para ${dayName}`, dayData);
       return (
-        <div className="bg-gradient-to-br from-white to-secondary/20 p-8 rounded-3xl shadow-xl border border-secondary/30">
-          <div className="flex items-center mb-6">
-            <div className="p-3 rounded-2xl bg-secondary text-light mr-4 shadow-lg">
-              <Calendar className="h-6 w-6" />
-            </div>
-            <h3 className="text-2xl font-bold text-primary uppercase tracking-wide">{dayName}</h3>
+        <div className="bg-white dark:bg-dark-bg-primary rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-gray-50 dark:bg-dark-bg-secondary px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-bold text-primary dark:text-dark-primary">Dia {dayName}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300">Nenhum exercício encontrado</p>
           </div>
-          <p className="text-gray-500">Nenhum exercício encontrado para este dia</p>
         </div>
       );
     }
 
     return (
-      <div className="bg-gradient-to-br from-white to-secondary/20 p-8 rounded-3xl shadow-xl border border-secondary/30 hover:shadow-2xl transition-all duration-500">
-        <div className="flex items-center mb-6">
-          <div className="p-3 rounded-2xl bg-secondary text-light mr-4 shadow-lg">
-            <Calendar className="h-6 w-6" />
+      <div className="bg-white dark:bg-dark-bg-primary rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden mb-4">
+        <button
+          onClick={() => toggleDay(dayKey)}
+          className="w-full bg-gradient-to-r from-secondary/10 to-secondary/5 hover:from-secondary/20 hover:to-secondary/10 dark:from-dark-secondary/10 dark:to-dark-secondary/5 dark:hover:from-dark-secondary/20 dark:hover:to-dark-secondary/10 px-6 py-4 border-b border-gray-200 dark:border-gray-700 transition-all duration-200"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-lg bg-secondary dark:bg-dark-secondary text-white shadow-md">
+                <Calendar className="h-5 w-5" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-bold text-primary dark:text-dark-primary">Dia {dayName}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{dayData.exercises.length} exercícios</p>
+              </div>
+            </div>
+            <div className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
+              <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+            </div>
           </div>
-          <h3 className="text-2xl font-bold text-primary uppercase tracking-wide">{dayName}</h3>
-        </div>
+        </button>
         
-        <div className="space-y-4">
-          {dayData.exercises.map((exercise, index) => (
-            <ExerciseCard key={exercise.exercise_id || index} exercise={exercise} />
-          ))}
-        </div>
-        
-        <div className="mt-6 pt-4 border-t border-secondary/30">
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span className="flex items-center">
-              <Clock className="h-4 w-4 mr-1" />
-              {dayData.exercises.length} exercícios
-            </span>
-            <span className="bg-secondary/20 text-secondary px-3 py-1 rounded-full font-medium">
-              Dia {dayName}
-            </span>
+        {isExpanded && (
+          <div className="overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-dark-bg-secondary">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Exercício</th>
+                    <th className="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Séries</th>
+                    <th className="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Reps/Tempo</th>
+                    <th className="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Pausa</th>
+                    <th className="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Tipo</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-dark-bg-primary divide-y divide-gray-200 dark:divide-gray-700">
+                  {dayData.exercises.map((exercise, index) => (
+                    <ExerciseRow key={exercise.exercise_id || index} exercise={exercise} index={index} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   };
 
   const MicrocycleCard = ({ microcycleName, microcycleData }) => {
-    // microcycleData é um array onde [0] = training_parameters e [1], [2], etc. = dias
+    const isExpanded = expandedMicrocycles[microcycleName];
     const trainingParams = microcycleData[0]?.training_parameters;
     
-    // Extrair os dias de treino (índices 1 em diante)
+    // Extrair os dias de treino
     const trainingDays = [];
     for (let i = 1; i < microcycleData.length; i++) {
       const dayObj = microcycleData[i];
-      // Cada dayObj é algo como { "SU": { "exercises": [...] } }
       Object.keys(dayObj).forEach(dayName => {
         trainingDays.push({
           name: dayName,
@@ -1386,132 +1417,192 @@ const FullPrescriptionView = () => {
       });
     }
 
+    const totalExercises = trainingDays.reduce((total, day) => total + (day.data?.exercises?.length || 0), 0);
+
     return (
-      <div className="bg-gradient-to-br from-white to-light/50 rounded-3xl shadow-2xl p-10 mb-12 border border-light/30 backdrop-blur-sm">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-secondary text-light mb-4 shadow-lg">
-            <BarChart3 className="h-8 w-8" />
-          </div>
-          <h2 className="text-4xl font-bold text-primary">
-            {microcycleName.replace('_', ' ').toUpperCase()}
-          </h2>
-        </div>
-        
-        {trainingParams && (
-          <div className="bg-gradient-to-r from-light/50 to-white/50 p-8 rounded-3xl mb-8 border border-light/30 shadow-inner">
-            <div className="flex items-center mb-6">
-              <div className="p-2 rounded-xl bg-secondary/20 text-secondary mr-3">
-                <Settings className="h-5 w-5" />
+      <div className="bg-white dark:bg-dark-bg-primary rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden mb-8">
+        <button
+          onClick={() => toggleMicrocycle(microcycleName)}
+          className="w-full bg-gradient-to-r from-secondary/20 to-secondary/10 hover:from-secondary/30 hover:to-secondary/15 dark:from-dark-secondary/20 dark:to-dark-secondary/10 dark:hover:from-dark-secondary/30 dark:hover:to-dark-secondary/15 p-6 transition-all duration-200"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 rounded-xl bg-secondary dark:bg-dark-secondary text-white shadow-lg">
+                <BarChart3 className="h-8 w-8" />
               </div>
-              <h3 className="text-2xl font-bold text-primary">Parâmetros de Treino</h3>
+              <div className="text-left">
+                <h2 className="text-3xl font-bold text-primary dark:text-dark-primary">
+                  {microcycleName.replace('_', ' ').toUpperCase()}
+                </h2>
+                <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  <span>{trainingDays.length} dias de treino</span>
+                  <span>•</span>
+                  <span>{totalExercises} exercícios total</span>
+                </div>
+              </div>
             </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white p-4 rounded-xl shadow-md">
-                <div className="text-xs text-secondary font-bold uppercase tracking-wider mb-2">Manifestação</div>
-                <div className="text-sm font-semibold text-gray-700">{trainingParams.strength_manifestation}</div>
-              </div>
-              <div className="bg-white p-4 rounded-xl shadow-md">
-                <div className="text-xs text-accent font-bold uppercase tracking-wider mb-2">Intensidade</div>
-                <div className="text-sm font-semibold text-gray-700">{trainingParams.maximum_strength}</div>
-              </div>
-              <div className="bg-white p-4 rounded-xl shadow-md">
-                <div className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Séries</div>
-                <div className="text-lg font-bold text-primary/80">{trainingParams.sets}</div>
-              </div>
-              {trainingParams.repetitions && (
-                <div className="bg-white p-4 rounded-xl shadow-md">
-                  <div className="text-xs text-accent font-bold uppercase tracking-wider mb-2">Repetições</div>
-                  <div className="text-lg font-bold text-accent/80">{trainingParams.repetitions.min}-{trainingParams.repetitions.max}</div>
+            <div className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+              <ChevronRight className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+            </div>
+          </div>
+        </button>
+        
+        {isExpanded && (
+          <div className="p-6 bg-gray-50 dark:bg-dark-bg-secondary">
+            {trainingParams && (
+              <div className="bg-white dark:bg-dark-bg-primary rounded-xl p-6 mb-6 shadow-sm">
+                <div className="flex items-center mb-4">
+                  <div className="p-2 rounded-lg bg-secondary/10 text-secondary dark:bg-dark-secondary/20 dark:text-dark-secondary mr-3">
+                    <Settings className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-bold text-primary dark:text-dark-primary">Parâmetros de Treino</h3>
                 </div>
-              )}
-              <div className="bg-white p-4 rounded-xl shadow-md">
-                <div className="text-xs text-secondary font-bold uppercase tracking-wider mb-2">Pausa</div>
-                <div className="text-sm font-semibold text-gray-700">{trainingParams.pause_time}</div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="bg-gray-50 dark:bg-dark-bg-secondary p-3 rounded-lg">
+                    <div className="text-xs text-gray-600 dark:text-gray-300 font-medium uppercase tracking-wider mb-1">Manifestação</div>
+                    <div className="text-sm font-semibold text-primary dark:text-dark-primary">{trainingParams.strength_manifestation}</div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-dark-bg-secondary p-3 rounded-lg">
+                    <div className="text-xs text-gray-600 dark:text-gray-300 font-medium uppercase tracking-wider mb-1">Intensidade</div>
+                    <div className="text-sm font-semibold text-primary dark:text-dark-primary">{trainingParams.maximum_strength}</div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-dark-bg-secondary p-3 rounded-lg">
+                    <div className="text-xs text-gray-600 dark:text-gray-300 font-medium uppercase tracking-wider mb-1">Séries</div>
+                    <div className="text-lg font-bold text-secondary dark:text-dark-secondary">{trainingParams.sets}</div>
+                  </div>
+                  {trainingParams.repetitions && (
+                    <div className="bg-gray-50 dark:bg-dark-bg-secondary p-3 rounded-lg">
+                      <div className="text-xs text-gray-600 dark:text-gray-300 font-medium uppercase tracking-wider mb-1">Repetições</div>
+                      <div className="text-lg font-bold text-accent dark:text-dark-accent">{trainingParams.repetitions.min}-{trainingParams.repetitions.max}</div>
+                    </div>
+                  )}
+                  <div className="bg-gray-50 dark:bg-dark-bg-secondary p-3 rounded-lg">
+                    <div className="text-xs text-gray-600 dark:text-gray-300 font-medium uppercase tracking-wider mb-1">Pausa</div>
+                    <div className="text-sm font-semibold text-primary dark:text-dark-primary">{trainingParams.pause_time}</div>
+                  </div>
+                  {trainingParams.concentric_contraction_tempo && (
+                    <div className="bg-gray-50 dark:bg-dark-bg-secondary p-3 rounded-lg">
+                      <div className="text-xs text-gray-600 dark:text-gray-300 font-medium uppercase tracking-wider mb-1">Tempo Concêntrico</div>
+                      <div className="text-sm font-semibold text-primary dark:text-dark-primary">{trainingParams.concentric_contraction_tempo}</div>
+                    </div>
+                  )}
+                  {trainingParams.eccentric_contraction_tempo && (
+                    <div className="bg-gray-50 dark:bg-dark-bg-secondary p-3 rounded-lg">
+                      <div className="text-xs text-gray-600 dark:text-gray-300 font-medium uppercase tracking-wider mb-1">Tempo Excêntrico</div>
+                      <div className="text-sm font-semibold text-primary dark:text-dark-primary">{trainingParams.eccentric_contraction_tempo}</div>
+                    </div>
+                  )}
+                </div>
               </div>
-              {trainingParams.concentric_contraction_tempo && (
-                <div className="bg-white p-4 rounded-xl shadow-md">
-                  <div className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Tempo Concêntrico</div>
-                  <div className="text-sm font-semibold text-gray-700">{trainingParams.concentric_contraction_tempo}</div>
-                </div>
-              )}
-              {trainingParams.eccentric_contraction_tempo && (
-                <div className="bg-white p-4 rounded-xl shadow-md">
-                  <div className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Tempo Excêntrico</div>
-                  <div className="text-sm font-semibold text-gray-700">{trainingParams.eccentric_contraction_tempo}</div>
-                </div>
-              )}
+            )}
+
+            <div className="space-y-4">
+              {trainingDays.map((day, index) => (
+                <TrainingDayCard
+                  key={index}
+                  dayName={day.name}
+                  dayData={day.data}
+                  microcycleName={microcycleName}
+                />
+              ))}
             </div>
           </div>
         )}
-
-        <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {trainingDays.map((day, index) => (
-            <TrainingDayCard
-              key={index}
-              dayName={day.name}
-              dayData={day.data}
-            />
-          ))}
-        </div>
       </div>
     );
   };
 
+  const expandAllMicrocycles = () => {
+    const allMicrocycles = Object.keys(prescription).filter(key => key.toLowerCase().startsWith('microcycle'));
+    const expanded = {};
+    allMicrocycles.forEach(micro => {
+      expanded[micro] = true;
+    });
+    setExpandedMicrocycles(expanded);
+  };
+
+  const collapseAllMicrocycles = () => {
+    setExpandedMicrocycles({});
+    setExpandedDays({});
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-light via-white to-light/50 py-12">
+    <div className="min-h-screen py-8 bg-gray-50 dark:bg-dark-bg-primary">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="bg-gradient-to-br from-white to-light/50 rounded-3xl shadow-2xl p-12 mb-12 border border-light/30 backdrop-blur-sm">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-secondary text-light mb-6 shadow-lg">
-              <FileText className="h-10 w-10" />
+        {/* Header com botão voltar */}
+        <div className="bg-white dark:bg-dark-bg-secondary rounded-2xl shadow-lg p-8 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={() => dispatch({ type: 'SET_PAGE', payload: 'prescription' })}
+              className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-dark-primary transition-colors"
+            >
+              <ChevronLeft className="h-5 w-5" />
+              <span className="font-medium">Voltar às Prescrições</span>
+            </button>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={expandAllMicrocycles}
+                className="px-4 py-2 text-sm bg-secondary/10 text-secondary dark:bg-dark-secondary/20 dark:text-dark-secondary hover:bg-secondary/20 dark:hover:bg-dark-secondary/30 rounded-lg transition-colors"
+              >
+                Expandir Todos
+              </button>
+              <button
+                onClick={collapseAllMicrocycles}
+                className="px-4 py-2 text-sm bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+              >
+                Colapsar Todos
+              </button>
             </div>
-            <h1 className="text-5xl font-bold text-primary mb-4">
+          </div>
+          
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-secondary dark:bg-dark-secondary text-white mb-4 shadow-lg">
+              <FileText className="h-8 w-8" />
+            </div>
+            <h1 className="text-4xl font-bold mb-2 text-primary dark:text-dark-primary">
               Sua Prescrição de Treino
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Plano personalizado gerado com inteligência artificial baseado no seu perfil
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="bg-gradient-to-br from-secondary/20 to-secondary/10 p-6 rounded-2xl border border-secondary/30 shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="p-2 rounded-xl bg-secondary text-light mr-3">
-                  <Users className="h-5 w-5" />
-                </div>
-                <h3 className="text-xl font-bold text-secondary/80">Divisão</h3>
+          {/* Informações da prescrição */}
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-secondary/10 border-secondary/20 dark:bg-dark-secondary/20 dark:border-dark-secondary/30 p-6 rounded-xl border">
+              <div className="flex items-center mb-3">
+                <Users className="h-5 w-5 mr-2 text-secondary dark:text-dark-secondary" />
+                <h3 className="font-bold text-primary dark:text-dark-primary">Divisão</h3>
               </div>
-              <p className="text-secondary/90 font-semibold text-lg">{prescription.division_type}</p>
+              <p className="font-semibold text-secondary dark:text-dark-secondary">{prescription.division_type}</p>
             </div>
             
-            <div className="bg-gradient-to-br from-accent/20 to-accent/10 p-6 rounded-2xl border border-accent/30 shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="p-2 rounded-xl bg-secondary text-light mr-3">
-                  <TrendingUp className="h-5 w-5" />
-                </div>
-                <h3 className="text-xl font-bold text-accent/80">Sequência</h3>
+            <div className="bg-accent/10 border-accent/20 dark:bg-dark-accent/20 dark:border-dark-accent/30 p-6 rounded-xl border">
+              <div className="flex items-center mb-3">
+                <TrendingUp className="h-5 w-5 mr-2 text-accent dark:text-dark-accent" />
+                <h3 className="font-bold text-primary dark:text-dark-primary">Sequência</h3>
               </div>
-              <p className="text-accent/90 font-semibold text-lg">{prescription.sequency_type}</p>
+              <p className="font-semibold text-accent dark:text-dark-accent">{prescription.sequency_type}</p>
             </div>
             
-            <div className="bg-gradient-to-br from-primary/20 to-primary/10 p-6 rounded-2xl border border-primary/30 shadow-lg">
-              <div className="flex items-center mb-4">
-                <div className="p-2 rounded-xl bg-primary text-light mr-3">
-                  <Calendar className="h-5 w-5" />
-                </div>
-                <h3 className="text-xl font-bold text-primary/80">Periodização</h3>
+            <div className="bg-primary/10 border-primary/20 dark:bg-dark-primary/20 dark:border-dark-primary/30 p-6 rounded-xl border">
+              <div className="flex items-center mb-3">
+                <Calendar className="h-5 w-5 mr-2 text-primary dark:text-dark-primary" />
+                <h3 className="font-bold text-primary dark:text-dark-primary">Periodização</h3>
               </div>
-              <p className="text-primary/90 font-semibold text-lg">{prescription.periodization_type}</p>
+              <p className="font-semibold text-primary dark:text-dark-primary">{prescription.periodization_type}</p>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+          {/* Botões de ação */}
+          <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={() => window.print()}
-              className="bg-secondary text-light px-8 py-4 rounded-2xl hover:bg-secondary/90 inline-flex items-center justify-center font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="bg-secondary hover:bg-secondary/80 text-white dark:bg-dark-secondary dark:hover:bg-dark-secondary/80 px-6 py-3 rounded-lg inline-flex items-center font-medium shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              <Download className="mr-3 h-5 w-5" />
+              <Download className="mr-2 h-4 w-4" />
               Imprimir Prescrição
             </button>
             <button
@@ -1524,14 +1615,15 @@ const FullPrescriptionView = () => {
                 a.download = 'prescricao-treino.json';
                 a.click();
               }}
-              className="bg-secondary/80 text-light px-8 py-4 rounded-2xl hover:bg-secondary inline-flex items-center justify-center font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              className="bg-gray-200 hover:bg-gray-300 text-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-100 px-6 py-3 rounded-lg inline-flex items-center font-medium shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              <Download className="mr-3 h-5 w-5" />
+              <Download className="mr-2 h-4 w-4" />
               Exportar JSON
             </button>
           </div>
         </div>
 
+        {/* Microciclos */}
         {Object.entries(prescription)
           .filter(([key]) => key.toLowerCase().startsWith('microcycle'))
           .map(([microcycleName, microcycleData]) => (
@@ -1558,65 +1650,65 @@ const AdminPage = () => {
 
   const AdminDashboard = () => (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Dashboard Administrativo</h1>
+      <h1 className="text-3xl font-bold mb-8 dark:text-dark-primary">Dashboard Administrativo</h1>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Grupos Musculares</p>
-              <p className="text-3xl font-bold">47</p>
-              <p className="text-sm text-green-600">+2 este mês</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Grupos Musculares</p>
+              <p className="text-3xl font-bold dark:text-dark-primary">47</p>
+              <p className="text-sm text-green-600 dark:text-green-400">+2 este mês</p>
             </div>
-            <div className="p-3 rounded-full bg-secondary/20 text-secondary">
+            <div className="p-3 rounded-full bg-secondary/20 text-secondary dark:bg-dark-secondary/20 dark:text-dark-secondary">
               <Users className="h-6 w-6" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Exercícios</p>
-              <p className="text-3xl font-bold">245</p>
-              <p className="text-sm text-green-600">+12 este mês</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Exercícios</p>
+              <p className="text-3xl font-bold dark:text-dark-primary">245</p>
+              <p className="text-sm text-green-600 dark:text-green-400">+12 este mês</p>
             </div>
-            <div className="p-3 rounded-full bg-accent/20 text-accent">
+            <div className="p-3 rounded-full bg-accent/20 text-accent dark:bg-dark-accent/20 dark:text-dark-accent">
               <Activity className="h-6 w-6" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Prescrições</p>
-              <p className="text-3xl font-bold">1,247</p>
-              <p className="text-sm text-green-600">+89 este mês</p>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Prescrições</p>
+              <p className="text-3xl font-bold dark:text-dark-primary">1,247</p>
+              <p className="text-sm text-green-600 dark:text-green-400">+89 este mês</p>
             </div>
-            <div className="p-3 rounded-full bg-primary/20 text-primary">
+            <div className="p-3 rounded-full bg-primary/20 text-primary dark:bg-dark-primary/20 dark:text-dark-primary">
               <FileText className="h-6 w-6" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Sistema em Funcionamento</h2>
+      <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4 dark:text-dark-primary">Sistema em Funcionamento</h2>
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-3 bg-green-50 rounded">
+          <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/30 rounded">
             <div className="flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <span>API Backend</span>
+              <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <span className="dark:text-dark-primary">API Backend</span>
             </div>
-            <span className="text-green-600 font-medium">Online</span>
+            <span className="text-green-600 dark:text-green-400 font-medium">Online</span>
           </div>
-          <div className="flex items-center justify-between p-3 bg-green-50 rounded">
+          <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/30 rounded">
             <div className="flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <span>Banco de Dados</span>
+              <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <span className="dark:text-dark-primary">Banco de Dados</span>
             </div>
-            <span className="text-green-600 font-medium">Conectado</span>
+            <span className="text-green-600 dark:text-green-400 font-medium">Conectado</span>
           </div>
         </div>
       </div>
@@ -1629,19 +1721,19 @@ const AdminPage = () => {
     return (
       <div>
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Gerenciamento de Grupos Musculares</h1>
+          <h1 className="text-3xl font-bold dark:text-dark-primary">Gerenciamento de Grupos Musculares</h1>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="bg-secondary text-light px-4 py-2 rounded-lg hover:bg-secondary/80 inline-flex items-center"
+            className="bg-secondary text-light dark:bg-dark-secondary px-4 py-2 rounded-lg hover:bg-secondary/80 dark:hover:bg-dark-secondary/80 inline-flex items-center"
           >
             <Upload className="mr-2 h-4 w-4" />
             Sincronizar Dados
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Informações</h2>
-          <p className="text-gray-600">
+        <div className="bg-white dark:bg-dark-bg-secondary rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 dark:text-dark-primary">Informações</h2>
+          <p className="text-gray-600 dark:text-gray-300">
             Use este painel para sincronizar grupos musculares. A sincronização substitui 
             completamente todos os dados existentes.
           </p>
@@ -1649,25 +1741,25 @@ const AdminPage = () => {
 
         {showUploadModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
-              <h2 className="text-2xl font-bold mb-4">Sincronizar Grupos Musculares</h2>
-              <p className="text-gray-600 mb-4">Cole os dados JSON dos grupos musculares:</p>
+            <div className="bg-white dark:bg-dark-bg-secondary rounded-lg p-8 max-w-2xl w-full mx-4">
+              <h2 className="text-2xl font-bold mb-4 dark:text-dark-primary">Sincronizar Grupos Musculares</h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">Cole os dados JSON dos grupos musculares:</p>
               
               <textarea
-                className="w-full h-64 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary font-mono text-sm"
+                className="w-full h-64 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark-bg-primary rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary font-mono text-sm"
                 placeholder='{"muscle_groups": [{"id": "1", "name": "bíceps", ...}]}'
               />
               
               <div className="flex justify-end space-x-4 mt-6">
                 <button
                   onClick={() => setShowUploadModal(false)}
-                  className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  className="px-4 py-2 text-gray-600 bg-gray-200 dark:bg-gray-600 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={() => setShowUploadModal(false)}
-                  className="px-4 py-2 bg-secondary text-light rounded-lg hover:bg-secondary/80"
+                  className="px-4 py-2 bg-secondary text-light dark:bg-dark-secondary rounded-lg hover:bg-secondary/80 dark:hover:bg-dark-secondary/80"
                 >
                   Sincronizar
                 </button>
@@ -1681,16 +1773,16 @@ const AdminPage = () => {
 
   const ExercisesAdmin = () => (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Gerenciamento de Exercícios</h1>
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <p className="text-gray-600">Funcionalidade de gerenciamento de exercícios em desenvolvimento.</p>
+      <h1 className="text-3xl font-bold mb-8 dark:text-dark-primary">Gerenciamento de Exercícios</h1>
+      <div className="bg-white dark:bg-dark-bg-secondary rounded-lg shadow-md p-6">
+        <p className="text-gray-600 dark:text-gray-300">Funcionalidade de gerenciamento de exercícios em desenvolvimento.</p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-dotted">
-      <div className="bg-white shadow">
+    <div className="min-h-screen bg-dotted dark:bg-dark-bg-primary">
+      <div className="bg-white dark:bg-dark-bg-secondary shadow">
         <div className="container mx-auto px-4">
           <div className="flex space-x-8 overflow-x-auto">
             {adminTabs.map(tab => {
@@ -1701,8 +1793,8 @@ const AdminPage = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-2 px-4 py-4 border-b-2 whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'border-secondary text-secondary'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                      ? 'border-secondary text-secondary dark:border-dark-secondary dark:text-dark-secondary'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -1727,6 +1819,15 @@ const AdminPage = () => {
 const App = () => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
+  useEffect(() => {
+    localStorage.setItem('darkTheme', state.darkTheme);
+    if (state.darkTheme) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [state.darkTheme]);
+
   const renderPage = () => {
     switch (state.currentPage) {
       case 'home':
@@ -1744,7 +1845,7 @@ const App = () => {
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
-      <div className="min-h-screen transition-colors duration-300 bg-light text-primary">
+      <div className="min-h-screen transition-colors duration-300 bg-light text-primary dark:bg-dark-bg-primary dark:text-dark-primary">
         <Header />
         <main className="pt-20">
           {renderPage()}
