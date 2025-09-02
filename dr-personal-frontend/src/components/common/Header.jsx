@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { Home, UserPlus, FileText, Settings, Dumbbell, Moon, Sun } from 'lucide-react';
 import { AppContext } from '../../context/AppContext';
+import { useTheme } from '../../hooks/useTheme';
 
 const Header = () => {
   const { state, dispatch } = useContext(AppContext);
+  const { darkTheme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const navItems = [
@@ -53,11 +55,11 @@ const Header = () => {
             </nav>
             
             <button
-              onClick={() => dispatch({ type: 'TOGGLE_DARK_THEME' })}
+              onClick={toggleTheme}
               className="p-3 rounded-xl transition-all duration-300 hover:scale-110 bg-primary/10 text-primary hover:bg-primary/20 dark:bg-dark-secondary/20 dark:text-dark-secondary dark:hover:bg-dark-secondary/30"
-              title={state.darkTheme ? 'Modo Claro' : 'Modo Escuro'}
+              title={darkTheme ? 'Modo Claro' : 'Modo Escuro'}
             >
-              {state.darkTheme ? (
+              {darkTheme ? (
                 <Sun className="h-5 w-5" />
               ) : (
                 <Moon className="h-5 w-5" />

@@ -1,3 +1,5 @@
+import { TrendingUp, Heart, Calendar, Activity } from 'lucide-react';
+
 export const HEALTH_CONDITIONS = [
   'tendinopatia do supraespinal',
   'lombalgia crônica',
@@ -19,6 +21,13 @@ export const PROFILE_STEPS = [
   { id: 3, title: 'Força' },
   { id: 4, title: 'Saúde' }
 ];
+
+export const ICON_MAP = {
+  "Análise Inteligente": TrendingUp,
+  "Saúde Personalizada": Heart,
+  "Progressão Temporal": Calendar,
+  "Otimização Científica": Activity
+};
 
 export const FEATURES = [
   {
