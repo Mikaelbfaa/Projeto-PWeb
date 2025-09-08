@@ -55,6 +55,15 @@
   .glow-teal {
     box-shadow: 0 0 20px rgba(0, 173, 181, 0.3);
   }
+  
+  /* Toast animations */
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out forwards;
+  }
+  
+  .animate-slide-out-right {
+    animation: slideOutRight 0.2s ease-in forwards;
+  }
 }
 
 @keyframes gradient {
@@ -66,6 +75,28 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
   }
 }
 

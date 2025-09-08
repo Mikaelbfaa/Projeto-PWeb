@@ -216,6 +216,132 @@ const ProfilePage = () => {
           </div>
         );
         
+      case 2:
+        return (
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Tempo Ininterrupto de Treino (meses)
+              </label>
+              <input
+                type="number"
+                value={formData.uninterrupted_training_time}
+                onChange={(e) => handleInputChange('uninterrupted_training_time', e.target.value)}
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
+                min="0"
+                max="120"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Período de Destreino (meses)
+              </label>
+              <input
+                type="number"
+                value={formData.detraining}
+                onChange={(e) => handleInputChange('detraining', e.target.value)}
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
+                min="0"
+                max="120"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Experiência Prévia (anos)
+              </label>
+              <input
+                type="number"
+                value={formData.previous_experience}
+                onChange={(e) => handleInputChange('previous_experience', e.target.value)}
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
+                min="0"
+                max="50"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Nível Técnico
+              </label>
+              <select
+                value={formData.technique}
+                onChange={(e) => handleInputChange('technique', e.target.value)}
+                className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
+              >
+                <option value="BAD">Ruim</option>
+                <option value="REGULAR">Médio</option>
+                <option value="GOOD">Bom</option>
+                <option value="EXCELLENT">Excelente</option>
+              </select>
+            </div>
+          </div>
+        );
+        
+      case 3:
+        return (
+          <div className="space-y-6">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              Informe suas cargas máximas nos exercícios principais (em kg). Deixe em 0 se não souber.
+            </p>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Supino (kg)
+                </label>
+                <input
+                  type="number"
+                  value={formData.strength_values.bench_press}
+                  onChange={(e) => handleInputChange('strength_values.bench_press', e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
+                  min="0"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Puxada Alta (kg)
+                </label>
+                <input
+                  type="number"
+                  value={formData.strength_values.lat_pulldown}
+                  onChange={(e) => handleInputChange('strength_values.lat_pulldown', e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
+                  min="0"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Agachamento (kg)
+                </label>
+                <input
+                  type="number"
+                  value={formData.strength_values.squat}
+                  onChange={(e) => handleInputChange('strength_values.squat', e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
+                  min="0"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Levantamento Terra (kg)
+                </label>
+                <input
+                  type="number"
+                  value={formData.strength_values.deadlift}
+                  onChange={(e) => handleInputChange('strength_values.deadlift', e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-gray-300 bg-white dark:bg-dark-bg-secondary dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:focus:ring-dark-secondary"
+                  min="0"
+                />
+              </div>
+            </div>
+          </div>
+        );
+        
       case 4:
         return (
           <div className="space-y-6">

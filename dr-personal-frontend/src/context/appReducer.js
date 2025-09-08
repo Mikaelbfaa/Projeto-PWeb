@@ -12,6 +12,15 @@ export const initialState = {
     healthConditions: [],
     routines: []
   },
+  localData: {
+    muscleGroups: [],
+    healthConditions: [],
+    preparationExercises: [],
+    strengthExercises: [],
+    routines: [],
+    syncTimes: {},
+    isLoaded: false
+  },
   loading: false,
   error: null,
   darkTheme: localStorage.getItem('darkTheme') === 'true',
@@ -47,6 +56,51 @@ export function appReducer(state, action) {
       return { 
         ...state, 
         adminData: { ...state.adminData, [action.dataType]: action.payload } 
+      };
+    case 'SET_LOCAL_DATA':
+      return {
+        ...state,
+        localData: { ...state.localData, [action.dataType]: action.payload }
+      };
+    case 'SET_LOCAL_SYNC_TIME':
+      return {
+        ...state,
+        localData: {
+          ...state.localData,
+          syncTimes: { ...state.localData.syncTimes, [action.dataType]: action.payload }
+        }
+      };
+    case 'SET_LOCAL_DATA_LOADED':
+      return {
+        ...state,
+        localData: { ...state.localData, isLoaded: action.payload }
+      };
+    case 'LOAD_ALL_LOCAL_DATA':
+      return {
+        ...state,
+        localData: {
+          ...state.localData,
+          muscleGroups: action.payload.muscleGroups || [],
+          healthConditions: action.payload.healthConditions || [],
+          preparationExercises: action.payload.preparationExercises || [],
+          strengthExercises: action.payload.strengthExercises || [],
+          routines: action.payload.routines || [],
+          syncTimes: action.payload.syncTimes || {},
+          isLoaded: true
+        }
+      };
+    case 'CLEAR_LOCAL_DATA':
+      return {
+        ...state,
+        localData: {
+          muscleGroups: [],
+          healthConditions: [],
+          preparationExercises: [],
+          strengthExercises: [],
+          routines: [],
+          syncTimes: {},
+          isLoaded: false
+        }
       };
     case 'TOGGLE_DARK_THEME':
       return { ...state, darkTheme: !state.darkTheme };

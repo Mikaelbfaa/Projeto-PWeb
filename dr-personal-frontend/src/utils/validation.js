@@ -42,7 +42,7 @@ export const getErrorMessage = (error) => {
   let errorMessage = 'Erro desconhecido';
   
   if (error.message.includes('Failed to fetch')) {
-    errorMessage = 'Erro de conexão. Verifique se o backend está rodando em http://localhost:8000';
+    errorMessage = 'Erro de conexão. Verifique se o backend está rodando na porta 8000';
   } else if (error.message.includes('422')) {
     errorMessage = 'Dados inválidos enviados para o servidor. Verifique todos os campos.';
   } else if (error.message.includes('500')) {

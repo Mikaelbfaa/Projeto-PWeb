@@ -5,7 +5,6 @@ const apiService = {
       
       const response = await fetch('/api/prescription/generate-partial-prescription', {
         method: 'POST',
-        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -56,7 +55,6 @@ const apiService = {
     try {
       const response = await fetch('/api/prescription/generate-prescription', {
         method: 'POST',
-        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -83,11 +81,163 @@ const apiService = {
   },
 
   syncMuscleGroups: async (data) => {
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    return { 
-      inserted_muscles: Array.isArray(data) ? data.length : 10,
-      deleted_muscles: 5
-    };
+    try {
+      console.log('Syncing muscle groups:', data);
+      
+      const response = await fetch('/api/metadata/sync-muscle-groups', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        let errorDetail = '';
+        try {
+          const errorBody = await response.text();
+          console.error('API Error Response:', errorBody);
+          errorDetail = errorBody ? ` - ${errorBody}` : '';
+        } catch (e) {
+          // Ignore error parsing response body
+        }
+        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error syncing muscle groups:', error);
+      throw error;
+    }
+  },
+
+  syncHealthConditions: async (data) => {
+    try {
+      console.log('Syncing health conditions:', data);
+      
+      const response = await fetch('/api/metadata/sync-health-conditions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        let errorDetail = '';
+        try {
+          const errorBody = await response.text();
+          console.error('API Error Response:', errorBody);
+          errorDetail = errorBody ? ` - ${errorBody}` : '';
+        } catch (e) {
+          // Ignore error parsing response body
+        }
+        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error syncing health conditions:', error);
+      throw error;
+    }
+  },
+
+  syncPreparationExercises: async (data) => {
+    try {
+      console.log('Syncing preparation exercises:', data);
+      
+      const response = await fetch('/api/metadata/sync-preparation-exercises', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        let errorDetail = '';
+        try {
+          const errorBody = await response.text();
+          console.error('API Error Response:', errorBody);
+          errorDetail = errorBody ? ` - ${errorBody}` : '';
+        } catch (e) {
+          // Ignore error parsing response body
+        }
+        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error syncing preparation exercises:', error);
+      throw error;
+    }
+  },
+
+  syncStrengthExercises: async (data) => {
+    try {
+      console.log('Syncing strength exercises:', data);
+      
+      const response = await fetch('/api/metadata/sync-strength-exercises', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        let errorDetail = '';
+        try {
+          const errorBody = await response.text();
+          console.error('API Error Response:', errorBody);
+          errorDetail = errorBody ? ` - ${errorBody}` : '';
+        } catch (e) {
+          // Ignore error parsing response body
+        }
+        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error syncing strength exercises:', error);
+      throw error;
+    }
+  },
+
+  syncRoutines: async (data) => {
+    try {
+      console.log('Syncing routines:', data);
+      
+      const response = await fetch('/api/metadata/sync-routines', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        let errorDetail = '';
+        try {
+          const errorBody = await response.text();
+          console.error('API Error Response:', errorBody);
+          errorDetail = errorBody ? ` - ${errorBody}` : '';
+        } catch (e) {
+          // Ignore error parsing response body
+        }
+        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error syncing routines:', error);
+      throw error;
+    }
   }
 };
 
