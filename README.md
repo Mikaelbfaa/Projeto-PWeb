@@ -6,7 +6,8 @@ Repositório referente ao projeto final da cadeira de Programação Web 1
 
 - Mikael Brasileiro Ferreira de Almeida Amaral
 - Lucas Oliveira Carvalho
-
+- Cristian Alves da Silva
+  
 ## Funcionalidades
 
 - **Análise Inteligente de Perfil**: Interface para coleta de dados pessoais, experiência e condições de saúde
