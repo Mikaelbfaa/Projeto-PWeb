@@ -9,22 +9,22 @@ const HomePage = () => {
   const { state, dispatch } = useContext(AppContext);
 
   return (
-    <div className="min-h-screen bg-dotted dark:bg-dark-bg-primary">
-      <section className={`${GRADIENTS.primary} text-light py-32 relative overflow-hidden transition-colors duration-500 ${GRADIENTS.primaryDark}`}>
+    <div className="min-h-screen bg-light dark:bg-dark-bg-primary">
+      <section className={`${GRADIENTS.primary} text-primary dark:text-dark-primary py-32 relative overflow-hidden transition-colors duration-500 ${GRADIENTS.primaryDark}`}>
         <div className="container mx-auto px-4 text-center relative">
           <div className="mb-8">
-            <div className={`inline-flex items-center justify-center p-4 ${BORDER_RADIUS.large} bg-light/10 backdrop-blur-sm border border-light/20 dark:bg-dark-secondary/20 dark:border-dark-accent/30 mb-6`}>
-              <Dumbbell className="h-16 w-16 text-light" />
+            <div className={`inline-flex items-center justify-center p-4 ${BORDER_RADIUS.large} bg-black/5 backdrop-blur-sm border border-black/10 dark:bg-white/5 dark:border-white/10 mb-6`}>
+              <Dumbbell className="h-16 w-16" />
             </div>
           </div>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight text-light">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
             Sistema de Prescrição
             <br />
             Inteligente de Treinos
           </h1>
           
-          <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed text-light font-medium">
+          <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
             Gere planos de treino personalizados, 
             baseados em evidências científicas e adaptados às suas condições de saúde.
           </p>
@@ -48,7 +48,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="py-24 dark:bg-dark-bg-primary">
+      {/* AQUI A CORREÇÃO: Garantindo que esta seção use a cor 'light' (nosso novo creme) */}
+      <section className="py-24 bg-light dark:bg-dark-bg-primary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary dark:text-dark-accent">
@@ -70,17 +71,17 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className={`${GRADIENTS.primary} py-24 relative overflow-hidden transition-colors duration-500 ${GRADIENTS.primaryDark}`}>
+      <section className={`${GRADIENTS.primary} text-primary dark:text-dark-primary py-24 relative overflow-hidden transition-colors duration-500 ${GRADIENTS.primaryDark}`}>
         <div className="container mx-auto px-4 text-center relative">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-light">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Pronto para transformar seus treinos?
             </h2>
-            <p className="text-xl md:text-2xl text-light font-medium mb-12 leading-relaxed">
+            <p className="text-xl md:text-2xl font-medium mb-12 leading-relaxed">
               Crie seu perfil completo e receba recomendações personalizadas em minutos.
             </p>
             
-            <div className="mt-12 flex justify-center items-center space-x-8 text-light font-medium">
+            <div className="mt-12 flex justify-center items-center space-x-8 font-medium">
               <div className="flex items-center">
                 <CheckCircle className="h-5 w-5 mr-2" />
                 <span>100% Gratuito</span>

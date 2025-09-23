@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useReducer } from 'react';
 import Header from './components/common/Header';
 import { AppContext } from './context/AppContext';
@@ -21,27 +22,46 @@ const App = () => {
   }, [state.darkTheme]);
 
   const renderPage = () => {
+    let pageComponent;
     switch (state.currentPage) {
       case 'home':
-        return <HomePage />;
+        pageComponent = <HomePage />;
+        break;
       case 'profile':
-        return <ProfilePage />;
+        pageComponent = <ProfilePage />;
+        break;
       case 'prescription':
-        return <PrescriptionPage />;
+        pageComponent = <PrescriptionPage />;
+        break;
       case 'admin':
-        return <AdminPage />;
+        pageComponent = <AdminPage />;
+        break;
       default:
-        return <HomePage />;
+        pageComponent = <HomePage />;
     }
+
+    return (
+      <motion.div
+        key={state.currentPage}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.3 }}
+      >
+        {pageComponent}
+      </motion.div>
+    );
   };
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       <ToastProvider>
-        <div className="min-h-screen transition-colors duration-300 bg-light text-primary dark:bg-dark-bg-primary dark:text-dark-primary">
+        <div className="theme-container min-h-screen transition-colors duration-300 bg-light text-primary dark:bg-dark-bg-primary dark:text-dark-primary">
           <Header />
           <main className="pt-20">
-            {renderPage()}
+            <AnimatePresence mode="wait">
+              {renderPage()}
+            </AnimatePresence>
           </main>
         </div>
       </ToastProvider>

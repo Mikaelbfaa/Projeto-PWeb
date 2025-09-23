@@ -17,9 +17,6 @@ export const SHADOWS = {
 
 export const GRADIENTS = {
   primary: 'bg-gradient-to-br from-blue-400 via-secondary to-amber-700',
-
-  // NOVO TEMA ESCURO: Um gradiente "Pôr do Sol" ou "Brasa".
-  // Começa com nosso âmbar principal e escurece para tons de laranja queimado.
   primaryDark: 'dark:bg-gradient-to-br dark:from-secondary dark:via-orange-700 dark:to-orange-900',
 
   card: 'bg-gradient-to-br from-light to-white',
