@@ -11,8 +11,7 @@ module.exports = {
         primary: '#30371fff',        // Ardósia escuro (texto principal)
         secondary: '#F59E0B',       // Âmbar (destaque principal)
         accent: '#6B7280',         // Ardósia médio (texto secundário)
-        light: '#f0f8ffff',       // Fundo principal claro (cinza super claro)
-
+        light: '#f0f8ffff',       // Creme claro (fundo de página)
         // Dark theme colors
         'dark-primary': '#E5E7EB',          // Texto principal claro
         'dark-secondary': '#F59E0B',       // Âmbar (destaque principal)
