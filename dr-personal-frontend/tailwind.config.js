@@ -7,18 +7,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // NOMES ORIGINAIS com VALORES DA NOVA PALETA "SLATE & AMBER"
+
         // Light theme colors
-        primary: '#222831',
-        secondary: '#00ADB5',
-        accent: '#393E46',
-        light: '#EEEEEE',
-        
+        primary: '#30371fff',        // Era: cinza escuro -> Agora: Ardósia escuro (texto principal)
+        secondary: '#F59E0B',      // Era: turquesa -> Agora: Âmbar (destaque principal)
+        accent: '#6B7280',         // Era: cinza médio -> Agora: Ardósia médio (texto secundário)
+        light: '#F9FAFB',         // Era: cinza claro -> Agora: Fundo de página claro
+
         // Dark theme colors
-        'dark-primary': '#F5F5F5', // Light gray for text
-        'dark-secondary': '#6D28D9', // Purple
-        'dark-accent': '#8B5CF6', // Lighter purple
-        'dark-bg-primary': '#1E1E1E', // Almost black
-        'dark-bg-secondary': '#2D2D2D', // Dark gray
+        'dark-primary': '#E5E7EB',      // Era: cinza claro -> Agora: Texto principal claro
+        'dark-secondary': '#F59E0B',    // Era: roxo -> Agora: Âmbar (destaque principal)
+        'dark-accent': '#FBBF24',       // Era: roxo claro -> Agora: Âmbar claro (hover)
+        'dark-bg-primary': '#111827',   // Era: quase preto -> Agora: Fundo de página escuro (Ardósia)
+        'dark-bg-secondary': '#1F2937', // Era: cinza escuro -> Agora: Fundo de superfície escura (Cards)
       },
     },
   },

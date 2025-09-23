@@ -1,5 +1,4 @@
-import React from 'react';
-import { BORDER_RADIUS, SHADOWS, GRADIENTS } from '../../constants/styles';
+import { BORDER_RADIUS, GRADIENTS, SHADOWS } from '../../constants/styles';
 
 const FeatureCard = ({ feature, Icon }) => {
   return (

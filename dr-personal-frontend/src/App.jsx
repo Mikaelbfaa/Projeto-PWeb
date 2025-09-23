@@ -1,12 +1,12 @@
-import React, { useReducer, useEffect } from 'react';
+import { useEffect, useReducer } from 'react';
+import Header from './components/common/Header';
 import { AppContext } from './context/AppContext';
 import { appReducer, initialState } from './context/appReducer';
 import { ToastProvider } from './context/ToastContext';
-import Header from './components/common/Header';
-import HomePage from './pages/HomePage';
-import ProfilePage from './pages/ProfilePage';
-import PrescriptionPage from './pages/PrescriptionPage';
 import AdminPage from './pages/AdminPage';
+import HomePage from './pages/HomePage';
+import PrescriptionPage from './pages/PrescriptionPage';
+import ProfilePage from './pages/ProfilePage';
 
 const App = () => {
   const [state, dispatch] = useReducer(appReducer, initialState);

@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
-import { Dumbbell, ChevronRight, CheckCircle } from 'lucide-react';
-import { AppContext } from '../context/AppContext';
-import { FEATURES, ICON_MAP } from '../constants';
+import { CheckCircle, ChevronRight, Dumbbell } from 'lucide-react';
+import { useContext } from 'react';
 import FeatureCard from '../components/common/FeatureCard';
-import { GRADIENTS, BUTTON_VARIANTS, BORDER_RADIUS } from '../constants/styles';
+import { FEATURES, ICON_MAP } from '../constants';
+import { BORDER_RADIUS, BUTTON_VARIANTS, GRADIENTS } from '../constants/styles';
+import { AppContext } from '../context/AppContext';
 
 const HomePage = () => {
   const { state, dispatch } = useContext(AppContext);

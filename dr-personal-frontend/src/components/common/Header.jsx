@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { Home, UserPlus, FileText, Settings, Dumbbell, Moon, Sun } from 'lucide-react';
+import { Dumbbell, FileText, Home, Moon, Settings, Sun, UserPlus } from 'lucide-react';
+import { useContext, useState } from 'react';
 import { AppContext } from '../../context/AppContext';
 import { useTheme } from '../../hooks/useTheme';
 
