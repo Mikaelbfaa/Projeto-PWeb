@@ -5,6 +5,7 @@ Repositório referente ao projeto final da cadeira de Programação Web 1
 ## Integrantes
 
 - Mikael Brasileiro Ferreira de Almeida Amaral
+- Lucas Oliveira Carvalho
 
 ## Funcionalidades
 
