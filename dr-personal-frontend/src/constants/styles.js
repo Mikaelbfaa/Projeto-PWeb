@@ -16,8 +16,8 @@ export const SHADOWS = {
 };
 
 export const GRADIENTS = {
-  primary: 'bg-gradient-to-br from-secondary/90 via-teal-500 to-teal-700',
-  primaryDark: 'dark:from-dark-secondary/90 dark:via-purple-700 dark:to-purple-800',
+  primary: 'bg-gradient-to-br from-secondary/90 via-teal-600 to-green-600',
+  primaryDark: 'dark:from-dark-secondary/90 dark:via-blue-900 dark:to-purple-900',
   card: 'bg-gradient-to-br from-light to-white',
   cardDark: 'dark:bg-gradient-to-br dark:from-dark-bg-secondary dark:to-dark-bg-secondary/80'
 };
