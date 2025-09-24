@@ -174,7 +174,7 @@ const DataViewer = () => {
         <div className="flex space-x-2">
           <button
             onClick={handleExport}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center px-4 py-2 bg-secondary text-light dark:bg-dark-secondary px-4 py-2 rounded-lg hover:bg-secondary/80 dark:hover:bg-dark-secondary/80 inline-flex items-center transition-colors"
           >
             <Download className="h-4 w-4 mr-2" />
             Exportar
@@ -227,8 +227,8 @@ const DataViewer = () => {
               }}
               className={`px-4 py-3 whitespace-nowrap border-b-2 ${
                 activeDataType === type.id
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                  : 'border-transparent text-orange-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
               {type.label} ({localData[type.key]?.length || 0})
