@@ -11,7 +11,7 @@ const Dashboard = () => {
       <h1 className="text-3xl font-bold mb-8 dark:text-dark-primary">Dashboard Administrativo</h1>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 hover:border-orange-200 dark:hover:border-orange-700">
+        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Grupos Musculares</p>
@@ -28,7 +28,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 hover:border-orange-200 dark:hover:border-orange-700">
+        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Condições de Saúde</p>
@@ -45,7 +45,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 hover:border-orange-200 dark:hover:border-orange-700">
+        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Exercícios</p>
@@ -62,7 +62,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 hover:border-orange-200 dark:hover:border-orange-700">
+        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Rotinas</p>
@@ -79,7 +79,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 hover:border-orange-200 dark:hover:border-orange-700">
+        <div className="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Total Local</p>
