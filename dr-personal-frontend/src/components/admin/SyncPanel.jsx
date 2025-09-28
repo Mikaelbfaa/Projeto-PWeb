@@ -100,7 +100,7 @@ const SyncPanel = ({
               Esta ação substituirá todos os dados existentes.
             </p>
             <p className="text-red-600 dark:text-red-400 text-sm mb-6">
-              ⚠️ Esta ação não pode ser desfeita!
+              ATENÇÃO: Esta ação não pode ser desfeita!
             </p>
             
             <div className="flex justify-end space-x-4">

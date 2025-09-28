@@ -113,9 +113,9 @@ const OfflineStatus = () => {
             <div>
               <p className="text-sm font-medium">Sincronização concluída!</p>
               <p className="text-xs">
-                ✅ {lastSyncResult.successful.length} sucesso(s)
+                {lastSyncResult.successful.length} sucesso(s)
                 {lastSyncResult.failed.length > 0 && (
-                  <span> | ❌ {lastSyncResult.failed.length} falha(s)</span>
+                  <span> | {lastSyncResult.failed.length} falha(s)</span>
                 )}
               </p>
             </div>

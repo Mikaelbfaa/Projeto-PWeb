@@ -1,15 +1,12 @@
-// Serviço que simula as respostas da API com dados realistas para demonstração
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const mockService = {
   generatePartialPrescription: async (profileData) => {
-    // Simula delay da API
     await delay(1500);
 
     console.log('Using MOCK data for partial prescription:', profileData);
 
-    // Dados mockados baseados no perfil do usuário
     const profile = profileData.profile;
     const isBeginnerLevel = profile.previous_experience <= 1;
     const hasHealthIssues = profile.health_conditions && profile.health_conditions.length > 0;
@@ -56,15 +53,12 @@ const mockService = {
   },
 
   generateFullPrescription: async (request) => {
-    // Simula delay da API
     await delay(2000);
 
     console.log('Using MOCK data for full prescription:', request);
 
-    // Gera dados dos microciclos
     const microcycles = generateMockMicrocycles(request);
 
-    // Cria estrutura compatível com FullPrescriptionView
     const prescription = {
       user_id: request.user_id,
       division_type: request.division_type,
@@ -88,7 +82,6 @@ const mockService = {
       is_demo: true
     };
 
-    // Adiciona microciclos como propriedades separadas (microcycle_1, microcycle_2, etc.)
     microcycles.forEach((microcycle, index) => {
       const microcycleName = `microcycle_${index + 1}`;
       prescription[microcycleName] = convertMicrocycleToExpectedFormat(microcycle, request);
@@ -107,7 +100,7 @@ function generateMockMicrocycles(request) {
     microcycles.push({
       week_number: week,
       intensity_percentage: intensity,
-      volume_percentage: 100 - (intensity - 70), // Volume inversamente proporcional
+      volume_percentage: 100 - (intensity - 70),
       training_sessions: generateMockSessions(request.division_type, week, intensity)
     });
   }
@@ -118,13 +111,13 @@ function generateMockMicrocycles(request) {
 function calculateIntensity(week, totalWeeks, periodizationType) {
   switch (periodizationType) {
     case 'linear':
-      return 70 + (week - 1) * (15 / (totalWeeks - 1)); // 70% a 85%
+      return 70 + (week - 1) * (15 / (totalWeeks - 1));
     case 'undulating':
-      return week % 2 === 1 ? 75 : 80; // Alterna entre 75% e 80%
+      return week % 2 === 1 ? 75 : 80;
     case 'block':
-      return week <= totalWeeks / 2 ? 70 : 85; // Primeiro bloco 70%, segundo 85%
+      return week <= totalWeeks / 2 ? 70 : 85;
     default:
-      return 75; // Default
+      return 75;
   }
 }
 
@@ -212,7 +205,6 @@ function createMockSession(name, type, intensity) {
 
   const exercises = exercisesByType[type] || exercisesByType.general || exercisesByType.full_body;
 
-  // Ajusta repetições baseado na intensidade
   const adjustedExercises = exercises.map(exercise => ({
     ...exercise,
     load_percentage: Math.round(intensity),
@@ -234,19 +226,17 @@ function createMockSession(name, type, intensity) {
 
 function adjustRepsForIntensity(originalReps, intensity) {
   if (intensity >= 85) {
-    return originalReps.replace(/\d+-\d+/, '6-8'); // Alta intensidade, menos reps
+    return originalReps.replace(/\d+-\d+/, '6-8');
   } else if (intensity >= 80) {
     return originalReps.replace(/\d+-\d+/, '8-10');
   } else {
-    return originalReps; // Mantém original para intensidades menores
+    return originalReps;
   }
 }
 
 function convertMicrocycleToExpectedFormat(microcycle, request) {
-  // Cria array no formato esperado pelo FullPrescriptionView
   const microcycleArray = [];
 
-  // Primeiro item: training_parameters (informações do microciclo)
   microcycleArray.push({
     training_parameters: {
       strength_manifestation: getStrengthManifestation(request.training_method),
@@ -259,7 +249,6 @@ function convertMicrocycleToExpectedFormat(microcycle, request) {
     }
   });
 
-  // Adiciona os dias de treino
   microcycle.training_sessions.forEach((session, index) => {
     const dayNumber = index + 1;
     const dayObject = {};
@@ -289,7 +278,6 @@ function convertSessionExercisesToExpectedFormat(exercises) {
 }
 
 function parseRepetitions(repsString) {
-  // Converte "8-10" para { min: 8, max: 10 }
   const match = repsString.match(/(\d+)-(\d+)/);
   if (match) {
     return {
@@ -297,7 +285,7 @@ function parseRepetitions(repsString) {
       max: parseInt(match[2])
     };
   }
-  return { min: 8, max: 12 }; // Default
+  return { min: 8, max: 12 };
 }
 
 function getStrengthManifestation(trainingMethod) {

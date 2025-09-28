@@ -128,7 +128,7 @@ class OfflineSyncManager {
     const failed = results.filter(r => !r.success);
 
     if (successful.length > 0) {
-      console.log(`✅ ${successful.length} sincronizações bem-sucedidas:`, 
+      console.log(`${successful.length} sincronizações bem-sucedidas:`, 
         successful.map(r => r.dataType));
       
       // Disparar evento personalizado
@@ -138,7 +138,7 @@ class OfflineSyncManager {
     }
 
     if (failed.length > 0) {
-      console.log(`❌ ${failed.length} sincronizações falharam:`, 
+      console.log(`${failed.length} sincronizações falharam:`, 
         failed.map(r => r.dataType));
     }
   }

@@ -1,5 +1,4 @@
 const apiService = {
-  // Verifica se o backend está online
   checkBackendStatus: async () => {
     try {
       const controller = new AbortController();
@@ -18,7 +17,6 @@ const apiService = {
     }
   },
 
-  // Detecta se um erro é de conectividade (backend offline)
   isConnectivityError: (error, additionalInfo = {}) => {
     console.log('Checking connectivity error for:', {
       message: error.message,
@@ -61,14 +59,12 @@ const apiService = {
       'Connection failed'
     ];
 
-    // Verificação padrão para indicadores de conectividade
     const hasConnectivityIndicator = connectivityIndicators.some(indicator =>
       error.message.includes(indicator) ||
       error.name === indicator ||
       error.code === indicator
     );
 
-    // Verificação especial para HTTP 500 - pode ser proxy error (backend offline)
     const isProxyError500 =
       error.message.includes('HTTP error! status: 500') &&
       (
@@ -129,11 +125,9 @@ const apiService = {
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
-          // Ignore error parsing response body
         }
 
         const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
-        // Adiciona informação sobre o body para detecção de conectividade
         error.responseInfo = {
           status: response.status,
           errorBody,
@@ -200,11 +194,9 @@ const apiService = {
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
-          // Ignore error parsing response body
         }
 
         const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
-        // Adiciona informação sobre o body para detecção de conectividade
         error.responseInfo = {
           status: response.status,
           errorBody,
@@ -242,11 +234,9 @@ const apiService = {
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
-          // Ignore error parsing response body
         }
 
         const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
-        // Adiciona informação sobre o body para detecção de conectividade
         error.responseInfo = {
           status: response.status,
           errorBody,
@@ -284,11 +274,9 @@ const apiService = {
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
-          // Ignore error parsing response body
         }
 
         const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
-        // Adiciona informação sobre o body para detecção de conectividade
         error.responseInfo = {
           status: response.status,
           errorBody,
@@ -326,11 +314,9 @@ const apiService = {
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
-          // Ignore error parsing response body
         }
 
         const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
-        // Adiciona informação sobre o body para detecção de conectividade
         error.responseInfo = {
           status: response.status,
           errorBody,
@@ -368,11 +354,9 @@ const apiService = {
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
-          // Ignore error parsing response body
         }
 
         const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
-        // Adiciona informação sobre o body para detecção de conectividade
         error.responseInfo = {
           status: response.status,
           errorBody,

@@ -11,7 +11,7 @@ const ErrorMessage = ({ error, onDismiss }) => (
           onClick={onDismiss}
           className="ml-auto text-accent dark:text-dark-accent hover:text-accent/80 dark:hover:text-dark-accent/80"
         >
-          ✕
+          ×
         </button>
       )}
     </div>

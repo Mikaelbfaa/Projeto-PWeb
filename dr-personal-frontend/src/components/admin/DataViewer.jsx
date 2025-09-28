@@ -319,7 +319,7 @@ const DataViewer = () => {
                 onClick={() => setSelectedItem(null)}
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
-                ✕
+                ×
               </button>
             </div>
             <pre className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap bg-gray-100 dark:bg-gray-800 p-4 rounded">

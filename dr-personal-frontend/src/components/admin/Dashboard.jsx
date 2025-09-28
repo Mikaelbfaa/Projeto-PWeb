@@ -1,7 +1,8 @@
 import React from 'react';
-import { Users, Heart, Activity, Calendar, FileText, CheckCircle, X, RefreshCw, Loader } from 'lucide-react';
+import { Users, Heart, Activity, Calendar, FileText, RefreshCw } from 'lucide-react';
 import { useLocalData } from '../../hooks/useLocalData';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
+import StatusCard from './StatusCard';
 
 const Dashboard = () => {
   const { getLocalDataStats } = useLocalData();
@@ -109,113 +110,31 @@ const Dashboard = () => {
         </div>
 
         <div className="space-y-4">
-          {/* API Backend Status */}
-          <div className={`flex items-center justify-between p-3 rounded ${
-            backendStatus.api.isOnline
-              ? 'bg-green-50 dark:bg-green-900/30'
-              : 'bg-red-50 dark:bg-red-900/30'
-          }`}>
-            <div className="flex items-center space-x-2">
-              {backendStatus.api.isChecking ? (
-                <Loader className="h-5 w-5 text-gray-500 animate-spin" />
-              ) : backendStatus.api.isOnline ? (
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-              ) : (
-                <X className="h-5 w-5 text-red-600 dark:text-red-400" />
-              )}
-              <div>
-                <span className="dark:text-dark-primary">API Backend</span>
-                {backendStatus.api.lastChecked && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Verificado: {backendStatus.api.lastChecked.toLocaleTimeString('pt-BR')}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="text-right">
-              <span className={`font-medium ${
-                backendStatus.api.isOnline
-                  ? 'text-green-600 dark:text-green-400'
-                  : 'text-red-600 dark:text-red-400'
-              }`}>
-                {backendStatus.api.isChecking ? 'Verificando...' :
-                 backendStatus.api.isOnline ? 'Online' : 'Offline'}
-              </span>
-              {backendStatus.api.error && (
-                <p className="text-xs text-red-500 dark:text-red-400 mt-1">
-                  {backendStatus.api.error}
-                </p>
-              )}
-            </div>
-          </div>
+          <StatusCard
+            title="API Backend"
+            status={backendStatus.api.isOnline}
+            isChecking={backendStatus.api.isChecking}
+            lastChecked={backendStatus.api.lastChecked}
+            error={backendStatus.api.error}
+          />
 
-          {/* Database Status */}
-          <div className={`flex items-center justify-between p-3 rounded ${
-            backendStatus.database.isOnline
-              ? 'bg-green-50 dark:bg-green-900/30'
-              : 'bg-red-50 dark:bg-red-900/30'
-          }`}>
-            <div className="flex items-center space-x-2">
-              {backendStatus.database.isChecking ? (
-                <Loader className="h-5 w-5 text-gray-500 animate-spin" />
-              ) : backendStatus.database.isOnline ? (
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-              ) : (
-                <X className="h-5 w-5 text-red-600 dark:text-red-400" />
-              )}
-              <div>
-                <span className="dark:text-dark-primary">Banco de Dados</span>
-                {backendStatus.database.lastChecked && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Verificado: {backendStatus.database.lastChecked.toLocaleTimeString('pt-BR')}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="text-right">
-              <span className={`font-medium ${
-                backendStatus.database.isOnline
-                  ? 'text-green-600 dark:text-green-400'
-                  : 'text-red-600 dark:text-red-400'
-              }`}>
-                {backendStatus.database.isChecking ? 'Verificando...' :
-                 backendStatus.database.isOnline ? 'Conectado' : 'Desconectado'}
-              </span>
-              {backendStatus.database.error && (
-                <p className="text-xs text-red-500 dark:text-red-400 mt-1">
-                  {backendStatus.database.error}
-                </p>
-              )}
-            </div>
-          </div>
+          <StatusCard
+            title="Banco de Dados"
+            status={backendStatus.api.isOnline}
+            isChecking={backendStatus.api.isChecking}
+            lastChecked={backendStatus.api.lastChecked}
+            error={backendStatus.api.error}
+            onlineText="Conectado"
+            offlineText="Desconectado"
+          />
 
-          {/* Network Status */}
-          <div className={`flex items-center justify-between p-3 rounded ${
-            backendStatus.network.isOnline
-              ? 'bg-blue-50 dark:bg-blue-900/30'
-              : 'bg-gray-50 dark:bg-gray-900/30'
-          }`}>
-            <div className="flex items-center space-x-2">
-              {backendStatus.network.isOnline ? (
-                <CheckCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-              ) : (
-                <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              )}
-              <div>
-                <span className="dark:text-dark-primary">Conectividade</span>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Verificado: {backendStatus.network.lastChecked.toLocaleTimeString('pt-BR')}
-                </p>
-              </div>
-            </div>
-            <span className={`font-medium ${
-              backendStatus.network.isOnline
-                ? 'text-blue-600 dark:text-blue-400'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}>
-              {backendStatus.network.isOnline ? 'Online' : 'Offline'}
-            </span>
-          </div>
+          <StatusCard
+            title="Conectividade"
+            status={backendStatus.network.isOnline}
+            isChecking={false}
+            lastChecked={backendStatus.network.lastChecked}
+            colorScheme="blue"
+          />
         </div>
       </div>
     </div>
