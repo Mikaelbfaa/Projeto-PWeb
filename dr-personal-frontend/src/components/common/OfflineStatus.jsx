@@ -16,7 +16,7 @@ const OfflineStatus = () => {
     // Escutar eventos de sincronização bem-sucedida
     const handleSyncSuccess = (event) => {
       setLastSyncResult(event.detail);
-      setTimeout(() => setLastSyncResult(null), 5000); // Limpar após 5 segundos
+      setTimeout(() => setLastSyncResult(null), 5000);
     };
 
     window.addEventListener('offlineSyncSuccess', handleSyncSuccess);
