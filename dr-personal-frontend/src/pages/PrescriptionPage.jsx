@@ -18,10 +18,15 @@ const PrescriptionPage = () => {
     prescriptionHistory,
     loading,
     error,
+    offlineModal,
+    demoMode,
     handleOptionChange,
     generateFullPrescription,
     viewPrescriptionDetails,
     navigateToProfile,
+    handleOfflineModalClose,
+    handleGoHome,
+    handleUseDemoData,
     clearError
   } = usePrescription();
 
@@ -83,6 +88,7 @@ const PrescriptionPage = () => {
               selectedOptions={selectedOptions}
               onOptionChange={handleOptionChange}
               onGenerateFullPrescription={handleGenerateFullPrescription}
+              onCreateProfile={navigateToProfile}
             />
           )}
         </div>

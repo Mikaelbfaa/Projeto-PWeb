@@ -4,6 +4,7 @@ import { AppContext } from '../context/AppContext';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import apiService from '../services/apiService';
+import mockService from '../services/mockService';
 import { HEALTH_CONDITIONS, PROFILE_STEPS } from '../constants';
 import { validateFormData, sanitizeFormData, getErrorMessage } from '../utils/validation';
 
@@ -91,12 +92,33 @@ const ProfilePage = () => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
       const sanitizedFormData = sanitizeFormData(formData);
-      const response = await apiService.generatePartialPrescription({ profile: sanitizedFormData });
+
+      // Usa dados mockados se estiver em modo demo
+      const service = state.demoMode ? mockService : apiService;
+      const response = await service.generatePartialPrescription({ profile: sanitizedFormData });
+
       dispatch({ type: 'SET_PARTIAL_PRESCRIPTION', payload: response });
       dispatch({ type: 'SET_USER_PROFILE', payload: sanitizedFormData });
       dispatch({ type: 'SET_PAGE', payload: 'prescription' });
     } catch (error) {
       console.error('Error generating partial prescription:', error);
+      console.log('Error details:', {
+        message: error.message,
+        name: error.name,
+        code: error.code,
+        demoMode: state.demoMode
+      });
+
+      // Verifica se é erro de conectividade e não está em modo demo
+      const additionalInfo = error.responseInfo || {};
+      if (apiService.isConnectivityError(error, additionalInfo) && !state.demoMode) {
+        console.log('Detected connectivity error, showing offline modal');
+        dispatch({ type: 'SHOW_OFFLINE_MODAL', payload: error.message });
+        dispatch({ type: 'SET_LOADING', payload: false });
+        return;
+      }
+
+      // Se chegou até aqui, é um erro real do servidor ou estamos em modo demo
       const errorMessage = getErrorMessage(error);
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
     } finally {

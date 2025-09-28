@@ -24,6 +24,11 @@ export const initialState = {
   loading: false,
   error: null,
   darkTheme: localStorage.getItem('darkTheme') === 'true',
+  offlineModal: {
+    isOpen: false,
+    connectivityError: null
+  },
+  demoMode: false,
 };
 
 export function appReducer(state, action) {
@@ -104,6 +109,24 @@ export function appReducer(state, action) {
       };
     case 'TOGGLE_DARK_THEME':
       return { ...state, darkTheme: !state.darkTheme };
+    case 'SHOW_OFFLINE_MODAL':
+      return {
+        ...state,
+        offlineModal: {
+          isOpen: true,
+          connectivityError: action.payload
+        }
+      };
+    case 'HIDE_OFFLINE_MODAL':
+      return {
+        ...state,
+        offlineModal: {
+          isOpen: false,
+          connectivityError: null
+        }
+      };
+    case 'SET_DEMO_MODE':
+      return { ...state, demoMode: action.payload };
     default:
       return state;
   }

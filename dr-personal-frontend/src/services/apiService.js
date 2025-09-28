@@ -1,4 +1,93 @@
 const apiService = {
+  // Verifica se o backend está online
+  checkBackendStatus: async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
+
+      const response = await fetch('/api/health', {
+        method: 'GET',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      return response.ok;
+    } catch (error) {
+      console.warn('Backend status check failed:', error);
+      return false;
+    }
+  },
+
+  // Detecta se um erro é de conectividade (backend offline)
+  isConnectivityError: (error, additionalInfo = {}) => {
+    console.log('Checking connectivity error for:', {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+      toString: error.toString(),
+      additionalInfo
+    });
+
+    const connectivityIndicators = [
+      // Fetch errors
+      'Failed to fetch',
+      'NetworkError',
+      'fetch',
+      'ERR_NETWORK',
+      'ERR_INTERNET_DISCONNECTED',
+      'ERR_CONNECTION_REFUSED',
+      'ERR_CONNECTION_RESET',
+
+      // Timeout errors
+      'timeout',
+      'TIMEOUT',
+      'AbortError',
+
+      // DNS/Network errors
+      'ENOTFOUND',
+      'ECONNREFUSED',
+      'ECONNRESET',
+      'ENETUNREACH',
+      'EHOSTUNREACH',
+
+      // HTTP errors que indicam backend offline
+      'HTTP error! status: 502',
+      'HTTP error! status: 503',
+      'HTTP error! status: 504',
+
+      // Generic network issues
+      'Network request failed',
+      'Unable to connect',
+      'Connection failed'
+    ];
+
+    // Verificação padrão para indicadores de conectividade
+    const hasConnectivityIndicator = connectivityIndicators.some(indicator =>
+      error.message.includes(indicator) ||
+      error.name === indicator ||
+      error.code === indicator
+    );
+
+    // Verificação especial para HTTP 500 - pode ser proxy error (backend offline)
+    const isProxyError500 =
+      error.message.includes('HTTP error! status: 500') &&
+      (
+        additionalInfo.emptyBody === true ||
+        additionalInfo.errorDetail === '' ||
+        error.message.includes('HTTP error! status: 500 - ')
+      );
+
+    const isConnectivityError = hasConnectivityIndicator || isProxyError500;
+
+    console.log('Connectivity analysis:', {
+      hasConnectivityIndicator,
+      isProxyError500,
+      finalResult: isConnectivityError
+    });
+
+    return isConnectivityError;
+  },
+
   generatePartialPrescription: async (profileData) => {
     try {
       console.log('Sending data to API:', profileData);
@@ -34,14 +123,24 @@ const apiService = {
 
       if (!response.ok) {
         let errorDetail = '';
+        let errorBody = '';
         try {
-          const errorBody = await response.text();
+          errorBody = await response.text();
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
           // Ignore error parsing response body
         }
-        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+
+        const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+        // Adiciona informação sobre o body para detecção de conectividade
+        error.responseInfo = {
+          status: response.status,
+          errorBody,
+          emptyBody: !errorBody || errorBody.trim() === ''
+        };
+
+        throw error;
       }
 
       return await response.json();
@@ -95,14 +194,24 @@ const apiService = {
 
       if (!response.ok) {
         let errorDetail = '';
+        let errorBody = '';
         try {
-          const errorBody = await response.text();
+          errorBody = await response.text();
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
           // Ignore error parsing response body
         }
-        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+
+        const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+        // Adiciona informação sobre o body para detecção de conectividade
+        error.responseInfo = {
+          status: response.status,
+          errorBody,
+          emptyBody: !errorBody || errorBody.trim() === ''
+        };
+
+        throw error;
       }
 
       return await response.json();
@@ -127,14 +236,24 @@ const apiService = {
 
       if (!response.ok) {
         let errorDetail = '';
+        let errorBody = '';
         try {
-          const errorBody = await response.text();
+          errorBody = await response.text();
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
           // Ignore error parsing response body
         }
-        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+
+        const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+        // Adiciona informação sobre o body para detecção de conectividade
+        error.responseInfo = {
+          status: response.status,
+          errorBody,
+          emptyBody: !errorBody || errorBody.trim() === ''
+        };
+
+        throw error;
       }
 
       return await response.json();
@@ -159,14 +278,24 @@ const apiService = {
 
       if (!response.ok) {
         let errorDetail = '';
+        let errorBody = '';
         try {
-          const errorBody = await response.text();
+          errorBody = await response.text();
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
           // Ignore error parsing response body
         }
-        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+
+        const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+        // Adiciona informação sobre o body para detecção de conectividade
+        error.responseInfo = {
+          status: response.status,
+          errorBody,
+          emptyBody: !errorBody || errorBody.trim() === ''
+        };
+
+        throw error;
       }
 
       return await response.json();
@@ -191,14 +320,24 @@ const apiService = {
 
       if (!response.ok) {
         let errorDetail = '';
+        let errorBody = '';
         try {
-          const errorBody = await response.text();
+          errorBody = await response.text();
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
           // Ignore error parsing response body
         }
-        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+
+        const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+        // Adiciona informação sobre o body para detecção de conectividade
+        error.responseInfo = {
+          status: response.status,
+          errorBody,
+          emptyBody: !errorBody || errorBody.trim() === ''
+        };
+
+        throw error;
       }
 
       return await response.json();
@@ -223,14 +362,24 @@ const apiService = {
 
       if (!response.ok) {
         let errorDetail = '';
+        let errorBody = '';
         try {
-          const errorBody = await response.text();
+          errorBody = await response.text();
           console.error('API Error Response:', errorBody);
           errorDetail = errorBody ? ` - ${errorBody}` : '';
         } catch (e) {
           // Ignore error parsing response body
         }
-        throw new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+
+        const error = new Error(`HTTP error! status: ${response.status}${errorDetail}`);
+        // Adiciona informação sobre o body para detecção de conectividade
+        error.responseInfo = {
+          status: response.status,
+          errorBody,
+          emptyBody: !errorBody || errorBody.trim() === ''
+        };
+
+        throw error;
       }
 
       return await response.json();

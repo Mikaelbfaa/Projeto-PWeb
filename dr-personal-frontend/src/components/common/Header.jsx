@@ -27,7 +27,7 @@ const Header = () => {
               <Dumbbell className="h-8 w-8 text-primary dark:text-dark-secondary" />
             </div>
             <h1 className="text-2xl font-bold text-secondary dark:text-dark-accent">
-              FitnessPro AI
+              FitnessPro
             </h1>
           </button>
           

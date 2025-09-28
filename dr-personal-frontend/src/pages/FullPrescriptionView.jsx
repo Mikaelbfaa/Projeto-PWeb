@@ -282,7 +282,7 @@ const FullPrescriptionView = () => {
               Sua Prescrição de Treino
             </h1>
             <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Plano personalizado gerado com inteligência artificial baseado no seu perfil
+              Plano personalizado baseado no seu perfil e necessidades específicas
             </p>
           </div>
           

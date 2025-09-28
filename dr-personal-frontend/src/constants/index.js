@@ -32,7 +32,7 @@ export const ICON_MAP = {
 export const FEATURES = [
   {
     title: "Análise Inteligente",
-    description: "IA avançada para análise de perfil e classificação automática de nível",
+    description: "Análise avançada para avaliação de perfil e classificação automática de nível",
   },
   {
     title: "Saúde Personalizada",

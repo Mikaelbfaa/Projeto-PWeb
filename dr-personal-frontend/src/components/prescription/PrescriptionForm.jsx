@@ -2,11 +2,12 @@ import React from 'react';
 import { FileText } from 'lucide-react';
 import OptionSelector from '../forms/OptionSelector';
 
-const PrescriptionForm = ({ 
-  partialPrescription, 
-  selectedOptions, 
-  onOptionChange, 
-  onGenerateFullPrescription 
+const PrescriptionForm = ({
+  partialPrescription,
+  selectedOptions,
+  onOptionChange,
+  onGenerateFullPrescription,
+  onCreateProfile
 }) => {
   if (!partialPrescription) {
     return (
@@ -18,7 +19,7 @@ const PrescriptionForm = ({
           Primeiro você precisa criar um perfil e gerar uma prescrição parcial.
         </p>
         <button
-          onClick={() => window.dispatchEvent(new CustomEvent('navigateTo', { detail: 'profile' }))}
+          onClick={onCreateProfile}
           className="bg-secondary text-light dark:bg-dark-secondary px-6 py-3 rounded-lg hover:bg-secondary/80 dark:hover:bg-dark-secondary/80"
         >
           Criar Perfil
